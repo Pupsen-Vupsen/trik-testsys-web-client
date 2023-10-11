@@ -18,46 +18,10 @@ class TaskService @Autowired constructor(
 ) : TrikService {
 
     /**
-     * @return Saved [Task] if it was saved, [null] otherwise
      * @author Roman Shishkin
      * @since 1.1.0
      */
-    fun saveTask(
-        name: String,
-        description: String,
-        developer: Developer,
-        tests: List<MultipartFile>,
-        training: MultipartFile?,
-        benchmark: MultipartFile?,
-    ): Task {
-        val task = Task(name, description, developer)
-        task.countOfTests = tests.size.toLong()
-        taskRepository.save(task)
-
-        task.hasBenchmark = benchmark != null
-        task.hasTraining = training != null
-
-        val allFiles = tests.map { TrikFile(task, it.originalFilename!!, TrikFile.Type.TEST) }.toMutableSet()
-
-        benchmark?.let {
-            val benchmarkFile = TrikFile(task, benchmark.originalFilename!!, TrikFile.Type.BENCHMARK)
-            allFiles.add(benchmarkFile)
-        }
-
-        training?.let {
-            val trainingFile = TrikFile(task, training.originalFilename!!, TrikFile.Type.TRAINING)
-            allFiles.add(trainingFile)
-        }
-
-        trikFileService.saveAll(allFiles)
-        return taskRepository.save(task)
-    }
-
-    /**
-     * @author Roman Shishkin
-     * @since 1.1.0
-     */
-    fun saveTask(task: Task): Task {
+    fun save(task: Task): Task {
         return taskRepository.save(task)
     }
 
@@ -126,5 +90,13 @@ class TaskService @Autowired constructor(
 
     fun getTaskById(taskId: Long): Task? {
         return taskRepository.findTaskById(taskId)
+    }
+
+    /**
+     * @since 1.1.0.14-alpha
+     */
+    fun saveParentTask(name: String, description: String, developer: Developer): Task {
+        val task = Task(name, description, developer)
+        return taskRepository.save(task)
     }
 }
