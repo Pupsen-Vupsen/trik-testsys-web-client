@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.client.RestTemplate
 import org.springframework.web.multipart.MultipartFile
 import org.springframework.web.servlet.ModelAndView
-import org.springframework.web.servlet.view.RedirectView
 import trik.testsys.webclient.controller.TrikUserController
 
 import trik.testsys.webclient.util.handler.GradingSystemErrorHandler
@@ -37,7 +36,7 @@ import java.time.LocalDateTime
 @RestController
 @RequestMapping("\${app.testsys.api.prefix}/developer")
 class DeveloperController @Autowired constructor(
-    @Value("\${app.grading-system.path}")
+    @Value("\${app.grading-system.url}")
     private val gradingSystemUrl: String,
 
     private val developerService: DeveloperService,
@@ -73,12 +72,9 @@ class DeveloperController @Autowired constructor(
         @RequestParam accessToken: String,
         @RequestParam name: String,
         @RequestParam description: String,
-        @RequestBody tests: List<MultipartFile>,
-        @RequestBody benchmark: MultipartFile?,
-        @RequestBody training: MultipartFile?,
         modelAndView: ModelAndView
     ): ModelAndView {
-        logger.info(accessToken, "Client trying to create task.")
+        logger.info(accessToken, "Client trying to create parent task.")
 
         val eitherDeveloperEntities = validateDeveloper(accessToken)
         if (eitherDeveloperEntities.isLeft()) {
@@ -93,21 +89,11 @@ class DeveloperController @Autowired constructor(
 
         modelAndView.addObject("accessToken", accessToken)
 
-        logger.info(accessToken, "Saving task $name.")
-        val task = taskService.saveTask(name, description, developer, tests, training, benchmark)
+        logger.info(accessToken, "Saving task parent $name.")
+        val task = taskService.saveParentTask(name, description, developer)
 
-        postTask("${task.id}: $name", tests, benchmark, training)
-//        val isTaskPosted = postTask(name, tests, benchmark, training)
-//        if (!isTaskPosted) {
-//            developerModelBuilder.postTaskMessage("Задача '${task.fullName}' не была загружена на сервер, попробуйте еще раз.")
-//            val developerModel = developerModelBuilder.build()
-//            modelAndView.addAllObjects(developerModel.asMap())
-//
-//            return modelAndView
-//        }
-        logger.info(accessToken, "Task '${task.getFullName()}' was successfully posted.")
+        logger.info(accessToken, "Parent task '${task.getFullName()}' was successfully saved.")
 
-        developerModelBuilder.postTaskMessage("Задача '${task.getFullName()}' была успешно загружена на сервер.")
         developerModelBuilder.tasks(developer.tasks)
         developerModelBuilder.admins(adminService.getAll())
         val developerModel = developerModelBuilder.build()
@@ -189,7 +175,7 @@ class DeveloperController @Autowired constructor(
         if (task != null) {
             val serverDeadline = deadline.minusHours(UTC_OFFSET)
             task.deadline = serverDeadline
-            taskService.saveTask(task)
+            taskService.save(task)
         }
 
         val developerModel = getModel(developer)
@@ -320,7 +306,7 @@ class DeveloperController @Autowired constructor(
 
         val admins = adminService.getAllByIds(adminIds)
         task.admins.addAll(admins)
-        taskService.saveTask(task)
+        taskService.save(task)
 
         logger.info(accessToken, "Task '${task.getFullName()}' was successfully attached to admins.")
 
@@ -363,7 +349,7 @@ class DeveloperController @Autowired constructor(
 
         val admins = adminService.getAllByIds(adminIds)
         task.admins.removeAll(admins.toSet())
-        taskService.saveTask(task)
+        taskService.save(task)
 
         admins.forEach { admin ->
             admin.tasks.remove(task)
@@ -453,7 +439,7 @@ class DeveloperController @Autowired constructor(
                 adminService.save(admin)
             }
 
-            taskService.saveTask(task)
+            taskService.save(task)
         } else {
             val allAdmins = adminService.getAll()
             task.admins.removeAll(allAdmins.toSet())
@@ -467,11 +453,11 @@ class DeveloperController @Autowired constructor(
             allGroups.forEach{group -> group.tasks.remove(task) }
             groupService.saveAll(allGroups)
 
-            taskService.saveTask(task)
+            taskService.save(task)
         }
 
         task.isPublic = isPublic
-        taskService.saveTask(task)
+        taskService.save(task)
 
         logger.info(accessToken, "Task '${task.getFullName()}' was successfully made public.")
 
