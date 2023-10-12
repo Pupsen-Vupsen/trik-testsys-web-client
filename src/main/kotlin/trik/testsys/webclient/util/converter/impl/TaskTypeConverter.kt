@@ -13,16 +13,16 @@ class TaskTypeConverter : TrikEnumConverter <Task.TaskType>{
 
     override fun convertToEntityAttribute(dbData: String?): Task.TaskType? {
         return when (dbData) {
-            "TRIK" -> Task.TaskType.TRIK
-            "EV3" -> Task.TaskType.EV3
+            Task.TaskType.TRIK.dbKey -> Task.TaskType.TRIK
+            Task.TaskType.EV3.dbKey -> Task.TaskType.EV3
             else -> null
         }
     }
 
     override fun convertToDatabaseColumn(attribute: Task.TaskType?): String? {
         return when (attribute) {
-            Task.TaskType.TRIK -> "TRIK"
-            Task.TaskType.EV3 -> "EV3"
+            Task.TaskType.TRIK -> Task.TaskType.TRIK.dbKey
+            Task.TaskType.EV3 -> Task.TaskType.EV3.dbKey
             else -> null
         }
     }

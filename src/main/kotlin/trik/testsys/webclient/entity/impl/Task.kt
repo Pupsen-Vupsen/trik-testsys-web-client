@@ -8,14 +8,7 @@ import javax.persistence.*
 @Entity
 @Table(name = "TASKS")
 class Task(
-    @Column(nullable = false, columnDefinition = "VARCHAR(1000) DEFAULT ''")
-    var name: String,
-
-    @Column(nullable = false, columnDefinition = "VARCHAR(1000) DEFAULT ''")
-    var description: String,
-
     /**
-     * @author Roman Shishkin
      * @since 1.1.0
      */
     @ManyToOne
@@ -25,10 +18,42 @@ class Task(
     ) val developer: Developer
 ) {
 
+    /**
+     * Creates parent task
+     * @since 1.1.0.14-alpha
+     */
+    constructor(name: String, description: String, developer: Developer) : this(developer) {
+        this.name = name
+        this.description = description
+        this.taskRole = TaskRole.PARENT
+    }
+
+    /**
+     * Creates child task
+     * @since 1.1.0.14-alpha
+     */
+    constructor(
+        parentTask: Task,
+        developer: Developer,
+        taskType: TaskType
+    ): this(developer) {
+        this.name = parentTask.name
+        this.description = parentTask.description
+        this.taskRole = TaskRole.CHILD
+        this.parentTask = parentTask
+        this.taskType = taskType
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false, unique = true)
     val id: Long? = null
+
+    @Column(nullable = false, columnDefinition = "VARCHAR(1000) DEFAULT ''")
+    var name: String = ""
+
+    @Column(nullable = false, columnDefinition = "VARCHAR(1000) DEFAULT ''")
+    var description: String = ""
 
     @ManyToMany(mappedBy = "tasks")
     val groups: MutableSet<Group> = mutableSetOf()
@@ -83,15 +108,13 @@ class Task(
     /**
      * @since 1.1.0.14-alpha
      */
-    @Column(nullable = true, columnDefinition = "ENUM('TRIK', 'EV3') DEFAULT null")
-    @Convert(converter = TaskTypeConverter::class)
+    @Column(nullable = true, columnDefinition = "VARCHAR(3) DEFAULT null")
     var taskType: TaskType? = null
 
     /**
      * @since 1.1.0.14-alpha
      */
-    @Column(nullable = false, columnDefinition = "ENUM('PARENT', 'CHILD') DEFAULT 'PARENT'")
-    @Convert(converter = TaskRoleConverter::class)
+    @Column(nullable = false, columnDefinition = "VARCHAR(3) DEFAULT 'P'")
     var taskRole: TaskRole = TaskRole.PARENT
 
     /**
@@ -118,14 +141,16 @@ class Task(
     /**
      * @since 1.1.0.14-alpha
      */
-    enum class TaskType {
-        TRIK, EV3
+    enum class TaskType(val dbKey: String) {
+        TRIK("T"),
+        EV3("E")
     }
 
     /**
      * @since 1.1.0.14-alpha
      */
-    enum class TaskRole {
-        PARENT, CHILD
+    enum class TaskRole(val dbKey: String) {
+        PARENT("P"),
+        CHILD("C")
     }
 }

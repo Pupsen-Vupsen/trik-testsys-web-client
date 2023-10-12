@@ -99,4 +99,32 @@ class TaskService @Autowired constructor(
         val task = Task(name, description, developer)
         return taskRepository.save(task)
     }
+
+    /**
+     * @since 1.1.0.14-alpha
+     */
+    fun saveChildTask(
+        task: Task,
+        tests: List<TrikFile>,
+        training: TrikFile?,
+        benchmark: TrikFile?
+    ): Task? {
+        val trikFiles = mutableSetOf<TrikFile>()
+
+        trikFiles.addAll(tests)
+        task.countOfTests = tests.size.toLong()
+
+        benchmark?.let {
+            trikFiles.add(it)
+            task.hasBenchmark = true
+        }
+        training?.let {
+            trikFiles.add(it)
+            task.hasTraining = true
+        }
+
+        trikFileService.saveAll(trikFiles)
+
+        return taskRepository.save(task)
+    }
 }

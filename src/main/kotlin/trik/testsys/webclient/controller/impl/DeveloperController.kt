@@ -21,6 +21,8 @@ import trik.testsys.webclient.controller.TrikUserController
 
 import trik.testsys.webclient.util.handler.GradingSystemErrorHandler
 import trik.testsys.webclient.entity.impl.Developer
+import trik.testsys.webclient.entity.impl.Task
+import trik.testsys.webclient.entity.impl.TrikFile
 import trik.testsys.webclient.entity.impl.WebUser
 import trik.testsys.webclient.model.impl.DeveloperModel
 import trik.testsys.webclient.service.impl.*
@@ -35,6 +37,7 @@ import java.time.LocalDateTime
  */
 @RestController
 @RequestMapping("\${app.testsys.api.prefix}/developer")
+@Suppress("UnnecessaryVariable")
 class DeveloperController @Autowired constructor(
     @Value("\${app.grading-system.url}")
     private val gradingSystemUrl: String,
@@ -93,6 +96,118 @@ class DeveloperController @Autowired constructor(
         val task = taskService.saveParentTask(name, description, developer)
 
         logger.info(accessToken, "Parent task '${task.getFullName()}' was successfully saved.")
+
+        developerModelBuilder.tasks(developer.tasks)
+        developerModelBuilder.admins(adminService.getAll())
+        val developerModel = developerModelBuilder.build()
+        modelAndView.addAllObjects(developerModel.asMap())
+
+        return modelAndView
+    }
+
+    /**
+     * @since 1.1.0.14-alpha
+     */
+    @PostMapping("/task/trik/create")
+    fun createTrikTask(
+        @RequestParam accessToken: String,
+        @RequestParam parentTaskId: Long,
+        @RequestParam tests: List<MultipartFile>,
+        @RequestParam benchmark: MultipartFile?,
+        @RequestParam training: MultipartFile?,
+        modelAndView: ModelAndView
+    ): ModelAndView {
+        logger.info(accessToken, "Client trying to create child task.")
+
+        val eitherDeveloperEntities = validateDeveloper(accessToken)
+        if (eitherDeveloperEntities.isLeft()) {
+            return eitherDeveloperEntities.getLeft()
+        }
+        modelAndView.view = REDIRECT_VIEW
+
+        val (developer, webUser) = eitherDeveloperEntities.getRight()
+        val developerModelBuilder = DeveloperModel.Builder()
+            .accessToken(accessToken)
+            .username(webUser.username)
+
+        modelAndView.addObject("accessToken", accessToken)
+
+        val parentTask = taskService.getTaskById(parentTaskId) ?: run {
+            logger.warn(accessToken, "Parent task with id '$parentTaskId' not found.")
+
+            developerModelBuilder.postTaskMessage("Родительская задача с id '$parentTaskId' не найдена.")
+            val developerModel = developerModelBuilder.build()
+            modelAndView.addAllObjects(developerModel.asMap())
+
+            return modelAndView
+        }
+
+        val task = Task(parentTask, developer, Task.TaskType.TRIK)
+
+        val trikTests = tests.map { TrikFile(task, it.originalFilename!!, TrikFile.Type.TEST) }
+        val trikBenchmark = benchmark?.let { TrikFile(task, it.originalFilename!!, TrikFile.Type.BENCHMARK) }
+        val trikTraining = training?.let { TrikFile(task, it.originalFilename!!, TrikFile.Type.TRAINING) }
+
+        //TODO: add posting task to grading system
+        taskService.saveChildTask(task, trikTests, trikBenchmark, trikTraining)
+
+        logger.info(accessToken, "Child task '${task.getFullName()}' was successfully saved.")
+
+        developerModelBuilder.tasks(developer.tasks)
+        developerModelBuilder.admins(adminService.getAll())
+        val developerModel = developerModelBuilder.build()
+        modelAndView.addAllObjects(developerModel.asMap())
+
+        return modelAndView
+    }
+
+    /**
+     * @since 1.1.0.14-alpha
+     */
+    @PostMapping("/task/ev3/create")
+    fun createEv3Task(
+        @RequestParam accessToken: String,
+        @RequestParam parentTaskId: Long,
+        @RequestParam tests: List<MultipartFile>,
+        @RequestParam benchmark: MultipartFile?,
+        @RequestParam training: MultipartFile?,
+        modelAndView: ModelAndView
+    ): ModelAndView {
+        logger.info(accessToken, "Client trying to create child task.")
+
+        val eitherDeveloperEntities = validateDeveloper(accessToken)
+        if (eitherDeveloperEntities.isLeft()) {
+            return eitherDeveloperEntities.getLeft()
+        }
+        modelAndView.view = REDIRECT_VIEW
+
+        val (developer, webUser) = eitherDeveloperEntities.getRight()
+        val developerModelBuilder = DeveloperModel.Builder()
+            .accessToken(accessToken)
+            .username(webUser.username)
+
+        modelAndView.addObject("accessToken", accessToken)
+
+        val parentTask = taskService.getTaskById(parentTaskId) ?: run {
+            logger.warn(accessToken, "Parent task with id '$parentTaskId' not found.")
+
+            developerModelBuilder.postTaskMessage("Родительская задача с id '$parentTaskId' не найдена.")
+            val developerModel = developerModelBuilder.build()
+            modelAndView.addAllObjects(developerModel.asMap())
+
+            return modelAndView
+        }
+
+        val task = Task(parentTask, developer, Task.TaskType.EV3)
+
+        val trikTests = tests.map { TrikFile(task, it.originalFilename!!, TrikFile.Type.TEST) }
+        val trikBenchmark = benchmark?.let { TrikFile(task, it.originalFilename!!, TrikFile.Type.BENCHMARK) }
+        val trikTraining = training?.let { TrikFile(task, it.originalFilename!!, TrikFile.Type.TRAINING) }
+
+        //TODO: add posting task to grading system
+        taskService.saveChildTask(task, trikTests, trikBenchmark, trikTraining)
+
+        logger.info(accessToken, "Child task '${task.getFullName()}' was successfully saved.")
 
         developerModelBuilder.tasks(developer.tasks)
         developerModelBuilder.admins(adminService.getAll())

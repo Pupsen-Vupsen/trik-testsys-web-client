@@ -13,16 +13,16 @@ class TaskRoleConverter : TrikEnumConverter<Task.TaskRole> {
 
     override fun convertToDatabaseColumn(attribute: Task.TaskRole?): String {
         return when (attribute) {
-            Task.TaskRole.PARENT -> "PARENT"
-            Task.TaskRole.CHILD -> "CHILD"
+            Task.TaskRole.PARENT -> Task.TaskRole.PARENT.dbKey
+            Task.TaskRole.CHILD -> Task.TaskRole.CHILD.dbKey
             else -> throw TrikIllegalArgumentException(String.format(ARGUMENT_ERROR, attribute))
         }
     }
 
     override fun convertToEntityAttribute(dbData: String?): Task.TaskRole {
         return when (dbData) {
-            "PARENT" -> Task.TaskRole.PARENT
-            "CHILD" -> Task.TaskRole.CHILD
+            Task.TaskRole.PARENT.dbKey -> Task.TaskRole.PARENT
+            Task.TaskRole.CHILD.dbKey -> Task.TaskRole.CHILD
             else -> throw TrikIllegalArgumentException(String.format(ARGUMENT_ERROR, dbData))
         }
     }

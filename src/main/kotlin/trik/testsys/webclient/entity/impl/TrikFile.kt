@@ -15,7 +15,7 @@ class TrikFile (
         nullable = false
     ) var task: Task,
 
-    @Column(nullable = false, columnDefinition = "VARCHAR(50) DEFAULT ''")
+    @Column(nullable = false, columnDefinition = "VARCHAR(200) DEFAULT ''")
     var name: String,
 
     @Column(nullable = false)
@@ -27,9 +27,9 @@ class TrikFile (
     @Column(nullable = false, unique = true)
     val id: Long? = null
 
-    enum class Type {
-        TEST,
-        BENCHMARK,
-        TRAINING
+    enum class Type(val dbKey: String) {
+        TEST("T"),
+        BENCHMARK("B"),
+        TRAINING("TR")
     }
 }

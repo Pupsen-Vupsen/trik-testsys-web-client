@@ -6,7 +6,6 @@ import org.springframework.http.*
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.servlet.ModelAndView
-import org.springframework.web.servlet.view.RedirectView
 import trik.testsys.webclient.controller.TrikUserController
 
 import trik.testsys.webclient.entity.impl.*
@@ -22,7 +21,7 @@ import java.time.LocalDateTime
 @RequestMapping("\${app.testsys.api.prefix}/admin")
 @Suppress("UnnecessaryVariable", "DuplicatedCode")
 class AdminController @Autowired constructor(
-    @Value("\${app.grading-system.path}")
+    @Value("\${app.grading-system.url}")
     private val gradingSystemUrl: String,
 
     private val adminService: AdminService,
@@ -336,7 +335,7 @@ class AdminController @Autowired constructor(
         publicTasks.forEach { it.admins.add(admin) }
         admin.tasks.addAll(publicTasks)
         adminService.save(admin)
-        publicTasks.forEach { taskService.saveTask(it) }
+        publicTasks.forEach { taskService.save(it) }
 
         val adminModel = getModel(admin)
         modelAndView.addAllObjects(adminModel.asMap())
@@ -377,7 +376,7 @@ class AdminController @Autowired constructor(
         task.groups.addAll(groups)
         groups.forEach { it.tasks.add(task) }
         groupService.saveAll(groups)
-        taskService.saveTask(task)
+        taskService.save(task)
 
         logger.info(accessToken, "Groups added to task: $task")
 
@@ -421,7 +420,7 @@ class AdminController @Autowired constructor(
         task.groups.removeAll(groups.toSet())
         groups.forEach { it.tasks.remove(task) }
         groupService.saveAll(groups)
-        taskService.saveTask(task)
+        taskService.save(task)
 
         logger.info(accessToken, "Groups removed from task: $task")
 
