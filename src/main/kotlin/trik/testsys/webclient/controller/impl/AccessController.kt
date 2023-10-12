@@ -12,6 +12,7 @@ import trik.testsys.webclient.service.impl.*
 import trik.testsys.webclient.util.AvatarGenerator
 import trik.testsys.webclient.util.TrikRedirectView
 import trik.testsys.webclient.util.logger.TrikLogger
+import java.io.File
 import java.time.LocalDateTime
 import java.time.ZoneOffset.UTC
 import java.util.*
@@ -27,7 +28,8 @@ class AccessController @Autowired constructor(
     private val groupService: GroupService,
     private val developerService: DeveloperService,
     private val viewerService: ViewerService,
-    private val avatarGenerator: AvatarGenerator
+
+    private val apiClient: GSApiClient
 ) {
 
     @GetMapping("/access")
@@ -100,6 +102,8 @@ class AccessController @Autowired constructor(
 
     @GetMapping
     fun get(model: Model): Model {
+        val bytes = apiClient.getSubmissionFile(1)
+
         return model
     }
 

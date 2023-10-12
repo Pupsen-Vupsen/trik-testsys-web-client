@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru" th:charset="utf-8">
+<head>
+    <meta charset="UTF-8">
+    <title>Group page</title>
+</head>
+<body>
+<div class="container">
+    <h1>Панель управления группой</h1>
+    <h2 th:styleappend="${table.size > 0} ? 'display: none' : 'display: block'">Пока решений нет</h2>
+    <div class="solutions-table" th:styleappend="${table.size > 0} ? 'display: flex' : 'display: none'">
+        <h2>Сводная таблица по группе <span th:text="${groupName}"></span></h2>
+        <table>
+            <tr>
+                <th style="width: 20%">Студент</th>
+                <th th:each="task : ${tasks}">
+                    <span th:text="${task.id}"></span>
+                </th>
+            </tr>
+            <tr th:each="student : ${students}">
+                <td th:text="${student.webUser.username}"></td>
+                <td th:each="task : ${tasks}">
+                    <span th:switch="${table[student.id][task.id]}">
+                        <span th:case=0>❌</span>
+                        <span th:case=1>✅</span>
+                        <span th:case=2>🔄</span>
+                        <span th:case=-1>⬜</span>
+                    </span>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <form class="back" action="/2023/admin/group" method="get">
+        <input style="display: none" type="text" name="accessToken" placeholder="Access token"
+               th:value="${accessToken}" readonly/>
+        <input style="display: none" type="text" name="groupAccessToken" placeholder="Group access token"
+               th:value="${groupAccessToken}" readonly/>
+        <input type="submit" value="Назад"/>
+    </form>
+</div>
+</body>
+</html>
+
+<style>
+    body {
+        font-family: sans-serif;
+    }
+
+    .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .created table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    .created th, td {
+        text-align: center;
+        padding: 8px;
+    }
+
+    .created tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+
+    .back {
+        margin-top: 20px;
+    }
+
+    .back input[type="submit"] {
+        width: 100%;
+        padding: 12px 20px;
+        margin: 8px 0;
+        display: inline-block;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+
+    }
+
+    input[type="submit"] {
+        width: 100%;
+        color: white;
+        background-color: #4CAF50;
+        padding: 14px 20px;
+        margin: 8px 0;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    input[type="submit"]:hover {
+        background-color: #45a049;
+    }
+
+    .created p {
+        margin: 0;
+        text-align: center;
+    }
+
+    .students-table, .tasks-table {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .students-table table, .tasks-table table {
+        border-collapse: collapse;
+        width: 80%;
+    }
+
+    .students-table th, td, .tasks-table th, td {
+        text-align: center;
+        padding: 8px;
+    }
+
+    .students-table tr:nth-child(even), .tasks-table tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+
+    .students-table th, .tasks-table th {
+        background-color: #4CAF50;
+        color: white;
+    }
+
+    .created table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    .created th, td {
+        text-align: center;
+        padding: 8px;
+    }
+
+    .created tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+
+    .created p {
+        margin: 0;
+        text-align: center;
+    }
+
+    table th {
+        background-color: #4CAF50;
+        color: white;
+    }
+
+    .token {
+        font-family: monospace;
+    }
+
+    .creation input[type="submit"] {
+        width: 100%;
+        color: white;
+        background-color: #4CAF50;
+        padding: 10px 10px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .creation input[type="submit"]:hover {
+        background-color: #45a049;
+    }
+
+    .creation input[type="text"] {
+        width: 100%;
+        padding: 10px 10px;
+        margin: 5px 0;
+        display: inline-block;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+
+    .creation {
+        width: 20%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 20px;
+        margin-top: 10px;
+        text-align: center;
+        background: #f2f2f2;
+        border-radius: 5px;
+        padding: 15px 20px 20px;
+    }
+
+    .creation form p {
+        text-align: center;
+        margin-bottom: 5px;
+        margin-top: 0;
+    }
+
+    textarea {
+        width: 100%;
+        height: 100px;
+        padding: 10px 10px;
+        box-sizing: border-box;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        background-color: #f8f8f8;
+        resize: none;
+    }
+
+    .creation input[type="file"] {
+        width: 100%;
+        padding: 10px 10px;
+        margin: 5px 0;
+        display: inline-block;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+
+    .solutions-table, .tasks-table {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .solutions-table table, .tasks-table table {
+        border-collapse: collapse;
+        width: 80%;
+    }
+
+    .solutions-table th, td, .tasks-table th, td {
+        text-align: center;
+        padding: 8px;
+    }
+
+    .solutions-table tr:nth-child(even), .tasks-table tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+
+    .solutions-table th, .tasks-table th {
+        background-color: #4CAF50;
+        color: white;
+    }
+</style>

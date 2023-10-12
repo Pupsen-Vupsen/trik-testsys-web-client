@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru" th:charset="utf-8">
+<head>
+    <meta charset="UTF-8">
+    <title>Group page</title>
+</head>
+<body>
+<div class="container">
+    <h1>Панель управления группой</h1>
+
+    <div class="created group" th:styleappend="${isFound}? 'display: block' : 'display: none;'">
+        <p>Для предоставления студентам доступа к группе отправьте код-доступа, указанный ниже.</p>
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Название</th>
+                <th>Код-доступа</th>
+            </tr>
+            <tr>
+                <td th:text="${id}"></td>
+                <td th:text="${name}"></td>
+                <td class="token" th:text="${groupAccessToken}"></td>
+            </tr>
+        </table>
+    </div>
+    <div class="student-generation creation">
+        <form id="student-creation" th:action="@{/2023/admin/student/create}" method="get">
+            <p>Сгенерируйте учеников</p>
+            <input style="display: none" type="text" name="accessToken" placeholder="Access token"
+                   th:value="${accessToken}" readonly/>
+            <input style="display: none" type="text" name="groupAccessToken"
+                   placeholder="Group access token"
+                   th:value="${groupAccessToken}" readonly/>
+            <input type="number" min="1" th:max="200" step="1" name="count" placeholder="Количество учеников" required/>
+            <input type="text" name="studentAccessTokenPrefix" placeholder="Префикс кода-доступа"
+                   style="display: none" th:value="${name}"
+                   required readonly/>
+            <input type="text" name="namePrefix" placeholder="Префикс имени"
+                   style="display: none" th:value="${name}"
+                   required readonly/>
+            <input type="submit" value="Сгенерировать" required id="reset"/>
+        </form>
+    </div>
+    <div class="get-table">
+        <form class="" action="/2023/admin/group/table" method="get">
+            <input style="display: none" type="text" name="accessToken" placeholder="Access token"
+                   th:value="${accessToken}" readonly/>
+            <input style="display: none" type="text" name="groupAccessToken" placeholder="Group access token"
+                   th:value="${groupAccessToken}" readonly/>
+            <input type="submit" value="Сводная таблица"/>
+        </form>
+    </div>
+    <div class="tasks-table" th:styleappend="${tasks.size() > 0}? 'display: flex' : 'display: none;'">
+        <h2>Задачи</h2>
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Название</th>
+                <th>Описание</th>
+                <th style="width: 15%">Количество решений</th>
+                <th></th>
+            </tr>
+            <tr th:each="task : ${tasks}">
+                <td th:text="${task.id}"></td>
+                <td th:text="${task.name}"></td>
+                <td th:text="${task.description}"></td>
+                <td th:text="${task.solutions.size()}"></td>
+                <td style="width: 10%">
+                    <form th:action="@{/2023/admin/task}" method="get">
+                        <input style="display: none" type="text" name="accessToken" placeholder="Access token"
+                               th:value="${accessToken}" readonly/>
+                        <input style="display: none" type="text" name="groupAccessToken"
+                               placeholder="Group access token"
+                               th:value="${groupAccessToken}" readonly/>
+                        <input style="display: none" type="text" name="taskId" placeholder="Task ID"
+                               th:value="${task.id}" readonly/>
+                        <input type="submit" value="Подробнее"/>
+                    </form>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="students-table" th:styleappend="${students.size() > 0}? 'display: flex' : 'display: none;'">
+        <h2>Ученики</h2>
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Имя</th>
+                <th>Код-доступа</th>
+                <th></th>
+            </tr>
+            <tr th:each="student : ${students}">
+                <td th:text="${student.id}"></td>
+                <td th:text="${student.webUser.username}"></td>
+                <td class="token" th:text="${student.webUser.accessToken}"></td>
+                <td style="width: 10%">
+                    <form th:action="@{/2023/admin/student}" method="get">
+                        <input style="display: none" type="text" name="accessToken" placeholder="Access token"
+                               th:value="${accessToken}" readonly/>
+                        <input style="display: none" type="text" name="groupAccessToken"
+                               placeholder="Group access token"
+                               th:value="${groupAccessToken}" readonly/>
+                        <input style="display: none" type="text" name="studentId" placeholder="Student ID"
+                               th:value="${student.id}" readonly/>
+                        <input type="submit" value="Подробнее"/>
+                    </form>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <form class="back" action="/2023/admin" method="get">
+        <input style="display: none" type="text" name="accessToken" placeholder="Access token"
+               th:value="${accessToken}" readonly/>
+        <input type="submit" value="Назад"/>
+    </form>
+</div>
+</body>
+</html>
+
+<style>
+    body {
+        font-family: sans-serif;
+    }
+
+    .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .created table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    .created th, td {
+        text-align: center;
+        padding: 8px;
+    }
+
+    .created tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+
+    .back {
+        margin-top: 20px;
+    }
+
+    .back input[type="submit"] {
+        width: 100%;
+        padding: 12px 20px;
+        margin: 8px 0;
+        display: inline-block;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+
+    }
+
+    input[type="submit"] {
+        width: 100%;
+        color: white;
+        background-color: #4CAF50;
+        padding: 14px 20px;
+        margin: 8px 0;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    input[type="submit"]:hover {
+        background-color: #45a049;
+    }
+
+    .created p {
+        margin: 0;
+        text-align: center;
+    }
+
+    .students-table, .tasks-table {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .students-table table, .tasks-table table {
+        border-collapse: collapse;
+        width: 80%;
+    }
+
+    .students-table th, td, .tasks-table th, td {
+        text-align: center;
+        padding: 8px;
+    }
+
+    .students-table tr:nth-child(even), .tasks-table tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+
+    .students-table th, .tasks-table th {
+        background-color: #4CAF50;
+        color: white;
+    }
+
+    .created table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    .created th, td {
+        text-align: center;
+        padding: 8px;
+    }
+
+    .created tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+
+    .created p {
+        margin: 0;
+        text-align: center;
+    }
+
+    table th {
+        background-color: #4CAF50;
+        color: white;
+    }
+
+    .token {
+        font-family: monospace;
+    }
+
+    .creation input[type="submit"] {
+        width: 100%;
+        color: white;
+        background-color: #4CAF50;
+        padding: 10px 10px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .creation input[type="submit"]:hover {
+        background-color: #45a049;
+    }
+
+    .creation input[type="text"] {
+        width: 100%;
+        padding: 10px 10px;
+        margin: 5px 0;
+        display: inline-block;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+
+    .creation {
+        width: 20%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin-top: 10px;
+        text-align: center;
+        background: #f2f2f2;
+        border-radius: 5px;
+        padding: 15px 20px 20px;
+    }
+
+    .creation form p {
+        text-align: center;
+        margin-bottom: 5px;
+        margin-top: 0;
+    }
+
+    textarea {
+        width: 100%;
+        height: 100px;
+        padding: 10px 10px;
+        box-sizing: border-box;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        background-color: #f8f8f8;
+        resize: none;
+    }
+
+    .creation input[type="file"] {
+        width: 100%;
+        padding: 10px 10px;
+        margin: 5px 0;
+        display: inline-block;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+
+    .get-table {
+        width: 23%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .get-table > form {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    input[type = "number"] {
+        width: 100%;
+        padding: 10px 10px;
+        margin: 5px 0;
+        display: inline-block;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+
+    .creations {
+        width: 50%;
+    }
+
+    .creations > div {
+        width: 40%;
+        min-height: 300px;
+    }
+
+    .task-creation {
+        float: left;
+    }
+
+    .student-generation {
+        float: right;
+    }
+</style>
+
+<script>
+    // function that reloads page then form is submitted
+    $("#form").submit(function () {
+        location.reload();
+    });
+
+</script>

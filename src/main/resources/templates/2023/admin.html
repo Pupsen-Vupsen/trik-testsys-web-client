@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru" th:charset="utf-8">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin page</title>
+</head>
+<body>
+<div class="container">
+    <h1>Панель администратора</h1>
+    <div class="greeting">
+        <h2>Здравствуйте, <span th:text="${name}"></span>!</h2>
+        <p>Ваш код-доступа: <span class="token" th:text="${accessToken}"></span>.</p>
+        <p>Здесь вы можете настраивать и создавать группы.</p>
+    </div>
+    <div class="groups">
+        <div class="creation">
+            <form th:action="@{/2023/admin/group/create}" method="post">
+                <p>Создать группу</p>
+                <input style="display: none" type="text" name="accessToken" placeholder="Access token"
+                       th:value="${accessToken}" readonly/>
+                <input type="text" name="name" placeholder="Название группы" required/>
+                <input type="submit" value="Создать" required/>
+            </form>
+        </div>
+        <div class="groups-table" th:style="${groups.size() == 0} ? 'display: none' : 'display: flex'">
+            <table>
+                <tr>
+                    <th>ID</th>
+                    <th>Название</th>
+                    <th>Код-доступа</th>
+                    <th>Количество учеников</th>
+                    <th></th>
+                </tr>
+                <tr th:each="group : ${groups}">
+                    <td th:text="${group.id}"></td>
+                    <td th:text="${group.name}"></td>
+                    <td style="font-family: monospace" th:text="${group.accessToken}"></td>
+                    <td th:text="${group.students.size()}"></td>
+                    <td>
+                        <form class="button" th:action="@{/2023/admin/group}" method="get">
+                            <input style="display: none" type="text" name="accessToken" placeholder="Access token"
+                                   th:value="${accessToken}" readonly/>
+                            <input style="display: none" type="text" name="groupAccessToken"
+                                   placeholder="Group access token"
+                                   th:value="${group.accessToken}" readonly/>
+                            <input type="submit" value="Перейти"/>
+                        </form>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+
+<style>
+    body {
+        font-family: sans-serif;
+    }
+
+    .container {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .greeting {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .groups {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .groups-table {
+        width: 80%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .groups-table table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    .groups-table th, td {
+        text-align: left;
+        padding: 8px;
+    }
+
+    .groups-table tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+
+    .groups-table th {
+        background-color: #4CAF50;
+        color: white;
+    }
+
+    .creation {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .greeting {
+        text-align: center;
+    }
+
+    .greeting p {
+        text-align: center;
+    }
+
+    .greeting span {
+        font-weight: bold;
+    }
+
+    .greeting .token {
+        font-family: monospace;
+    }
+
+    .greeting .token:hover {
+        color: #45a049;
+    }
+
+    .greeting .token:active {
+        color: #4CAF50;
+    }
+
+    .greeting p {
+        margin: 5px;
+    }
+
+    .groups-table input {
+        width: 100%;
+    }
+
+    .groups-table form {
+        width: 100%;
+    }
+
+    .groups-table form input {
+        width: 100%;
+    }
+
+    .groups-table form input[type="submit"] {
+        width: 100%;
+    }
+
+    .groups-table input[type="submit"] {
+        width: 100%;
+        color: white;
+        background-color: #4CAF50;
+        padding: 10px 10px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .groups-table input[type="submit"]:hover {
+        background-color: #45a049;
+    }
+
+    .creation input[type="submit"] {
+        width: 100%;
+        color: white;
+        background-color: #4CAF50;
+        padding: 10px 10px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .creation input[type="submit"]:hover {
+        background-color: #45a049;
+    }
+
+    .creation input[type="text"] {
+        width: 100%;
+        padding: 10px 10px;
+        margin: 5px 0;
+        display: inline-block;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+
+    .creation {
+        width: 20%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 20px;
+        text-align: center;
+        background: #f2f2f2;
+        border-radius: 5px;
+        padding: 15px 20px 20px;
+    }
+
+    .creation form p {
+        text-align: center;
+        margin-bottom: 5px;
+        margin-top: 0;
+    }
+
+    h2 {
+        text-align: center;
+        margin: 0;
+    }
+</style>

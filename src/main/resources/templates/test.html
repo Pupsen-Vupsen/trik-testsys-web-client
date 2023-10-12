@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Форма для загрузки файлов</title>
+</head>
+<body>
+<form action="обработчик.php" method="post" enctype="multipart/form-data">
+  <div id="fileInputs">
+    <!-- Первый инпут для выбора файла -->
+    <div>
+      <input type="file" name="tests[]" accept="*.xml">
+      <button type="button" onclick="removeFileInput(this)">Удалить</button>
+    </div>
+  </div>
+  <button type="button" onclick="addFileInput()">Добавить файл</button>
+  <br>
+  <input type="submit" value="Загрузить файлы">
+</form>
+
+<script>
+  function addFileInput(id) {
+    const fileInputs = document.getElementById(id);
+    const newInputDiv = document.createElement('div');
+    const newInput = document.createElement('input');
+    newInput.type = 'file';
+    newInput.name = 'files[]';
+    newInput.accept = 'image/*';
+    const removeButton = document.createElement('button');
+    removeButton.type = 'button';
+    removeButton.textContent = 'Убрать';
+    removeButton.addEventListener('click', function() {
+      fileInputs.removeChild(newInputDiv);
+    });
+    newInputDiv.appendChild(newInput);
+    newInputDiv.appendChild(removeButton);
+    fileInputs.appendChild(newInputDiv);
+  }
+
+  function removeFileInput(inputDiv, id) {
+    const fileInputs = document.getElementById(id);
+    fileInputs.removeChild(inputDiv.parentElement);
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru" th:charset="utf-8">
+<head>
+    <meta charset="UTF-8">
+    <title>Страница Супер Пользователя</title>
+    <link rel="icon" th:href="@{/v1/testsys/img/trik_testsys_logo.ico}">
+    <link rel="stylesheet" th:href="@{/v1/testsys/css/style.css}"/>
+    <link rel="stylesheet" th:href="@{/v1/testsys/css/popup.css}"/>
+    <link rel="stylesheet" th:href="@{/v1/testsys/css/table.css}"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js">
+    </script>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <div class="page-type">
+            <img th:src="@{/v1/testsys/img/trik_testsys_logo.svg}" alt="logo">
+            <p>Страница Супер Пользователя</p>
+        </div>
+        <div class="exit">
+            <form th:action="@{/v1/testsys}" method="get">
+                <input type="submit" value="Выйти"/>
+            </form>
+        </div>
+    </div>
+    <div class="main">
+        <div class="info">
+            <div class="greeting">
+                <h3>Здравствуйте, <span th:text="${username}"></span>!</h3>
+                <p>На этой странице вы можете:</p>
+                <ul>
+                    <li>Создавать Организаторов;</li>
+                    <li>Создавать Наблюдателей;</li>
+                    <li>Настраивать связи между Организаторами и Наблюдателями.</li>
+                </ul>
+            </div>
+            <div class="user-data">
+                <p>Ваш Код-доступа: <b><span title="Нажмите, чтобы скопировать" th:text="${accessToken}"
+                                             id="accessToken" class="accessToken"
+                                             onclick="copy('accessToken')"></span>.</b>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="popup create-viewer-popup" id="createViewerPopup">
+        <div class="popup-content">
+            <button id="closeCreateViewer" class="close-button"
+                    onclick="closeCreateViewerPopup()">
+                <i class="fa fa-close"></i>
+            </button>
+            <h1>Создание наблюдателя</h1>
+            <form class="uploadForm" id="create-viewer-form"
+                  th:action="@{/v1/testsys/admin/viewer/create}" method="post">
+                <input type="text" name="accessToken" th:value="${accessToken}"
+                       placeholder="Код-доступа" required
+                       style="display: none"/>
+                <input type="text" name="username" placeholder="Имя пользователя" required/>
+                <input type="submit" value="Создать"/>
+            </form>
+        </div>
+    </div>
+
+    <div class="table viewers-tables">
+        <table>
+            <caption>Список наблюдателей</caption>
+            <tr>
+                <th>ID</th>
+                <th>Имя</th>
+                <th>Код-доступа</th>
+                <th>Действия</th>
+            </tr>
+            <tr th:each="viewer: ${viewers}" th:id="'viewer' + ${viewer.id}">
+                <td th:text="${viewer.id}"></td>
+                <td th:text="${viewer.webUser.username}"></td>
+                <td class="accessToken" th:id="'viewerAccessToken' + ${viewer.id}"
+                    title="Нажмите, чтобы скопировать" th:onclick="'copyViewerAccessToken(\'' + ${viewer.id} + '\')'"
+                    th:text="${viewer.webUser.accessToken}">
+                </td>
+                <td>
+                </td>
+            </tr>
+        </table>
+        <div class="add-button">
+            <button class="popup-button" id="createViewer">
+                <i class="fa fa-plus"></i>
+            </button>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+
+<script>
+    function copy(id) {
+        var copyText = document.getElementById(id);
+        var textArea = document.createElement("textarea");
+
+        textArea.value = copyText.textContent;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand("Copy");
+        textArea.remove();
+    }
+
+    function copyGroupAccessToken(id) {
+        var copyText = document.getElementById("groupAccessToken" + id);
+        var textArea = document.createElement("textarea");
+
+        textArea.value = copyText.textContent;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand("Copy");
+        textArea.remove();
+    }
+
+    function copyViewerAccessToken(id) {
+        var copyText = document.getElementById("viewerAccessToken" + id);
+        var textArea = document.createElement("textarea");
+
+        textArea.value = copyText.textContent;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand("Copy");
+        textArea.remove();
+    }
+
+    //region Scripts for group create popup
+    createGroup.addEventListener("click", function () {
+        createGroupPopup.classList.add("show");
+    });
+
+    closeCreateGroup.addEventListener("click", function () {
+        createGroupPopup.classList.remove("show");
+    });
+
+    function resetPopupForm(formId) {
+        document.getElementById(formId).reset();
+    }
+
+    //endregion
+
+    //region Scripts for create viewer popup
+    createViewer.addEventListener("click", function () {
+        createViewerPopup.classList.add("show");
+    });
+
+    closeCreateViewer.addEventListener("click", function () {
+        createViewerPopup.classList.remove("show");
+    });
+    //endregion
+
+    //region Scripts for group info popup
+    function showGroupInfoPopup(groupId) {
+        var groupInfoPopup = document.getElementById("groupInfoPopup" + groupId);
+        groupInfoPopup.classList.add("show");
+    }
+
+    function closeGroupInfoPopup(groupId) {
+        var groupInfoPopup = document.getElementById("groupInfoPopup" + groupId);
+        groupInfoPopup.classList.remove("show");
+
+        var form = groupInfoPopup.querySelector("form");
+        form.reset();
+    }
+
+    //endregion
+
+    //region Scripts for group edit popup
+    function showGroupEditPopup(groupId) {
+        var groupEditPopup = document.getElementById("groupEditPopup" + groupId);
+        groupEditPopup.classList.add("show");
+    }
+
+    function closeGroupEditPopup(groupId) {
+        var groupEditPopup = document.getElementById("groupEditPopup" + groupId);
+        groupEditPopup.classList.remove("show");
+
+        var form = groupEditPopup.querySelector("form");
+        form.reset();
+    }
+
+    //endregion
+
+    //region Scripts for group delete popup
+    function deleteGroupPopup(groupId) {
+        var groupDeletePopup = document.getElementById("groupDeletePopup" + groupId);
+        groupDeletePopup.classList.add("show");
+    }
+
+    function closeGroupDeletePopup(groupId) {
+        var groupDeletePopup = document.getElementById("groupDeletePopup" + groupId);
+        groupDeletePopup.classList.remove("show");
+
+        var form = groupDeletePopup.querySelector("form");
+        form.reset();
+    }
+
+    //endregion
+
+    //region Scripts for add tag to group popup
+    function groupEditLabelPopup(groupId) {
+        var addLabelPopup = document.getElementById("groupEditLabelPopup" + groupId);
+        addLabelPopup.classList.add("show");
+    }
+
+    function closeGroupEditLabelPopup(groupId) {
+        var addLabelPopup = document.getElementById("groupEditLabelPopup" + groupId);
+        addLabelPopup.classList.remove("show");
+
+        var form = addLabelPopup.querySelector("form");
+        form.reset();
+    }
+
+    //endregion
+
+    //region Scripts for add tasks to group popup
+    function addTaskToGroupsPopup(taskId) {
+        var addTaskToGroupsPopup = document.getElementById("addTaskToGroupsPopup" + taskId);
+        addTaskToGroupsPopup.classList.add("show");
+    }
+
+    function closeAddTaskToGroupsPopup(taskId) {
+        var addTaskToGroupsPopup = document.getElementById("addTaskToGroupsPopup" + taskId);
+        addTaskToGroupsPopup.classList.remove("show");
+
+        var form = addTaskToGroupsPopup.querySelector("form");
+        form.reset();
+    }
+
+    //endregion
+
+    //region Scripts for remove task from groups popup
+    function removeTaskFromGroupsPopup(taskId) {
+        var removeTaskFromGroupsPopup = document.getElementById("removeTaskFromGroupsPopup" + taskId);
+        removeTaskFromGroupsPopup.classList.add("show");
+    }
+
+    function closeRemoveTaskFromGroupsPopup(taskId) {
+        var removeTaskFromGroupsPopup = document.getElementById("removeTaskFromGroupsPopup" + taskId);
+        removeTaskFromGroupsPopup.classList.remove("show");
+
+        var form = removeTaskFromGroupsPopup.querySelector("form");
+        form.reset();
+    }
+
+    //endregion
+
+</script>
+
+<style>
+    .label {
+        display: inline-block;
+        padding: 2px 5px;
+        margin: 2px;
+        border-radius: 5px;
+        background-color: var(--trik-grey);
+        color: var(--trik-blue);
+        font-size: 12px;
+    }
+</style>

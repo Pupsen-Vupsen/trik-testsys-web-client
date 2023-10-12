@@ -20,7 +20,7 @@ import trik.testsys.webclient.util.handler.GradingSystemErrorHandler
  * @since 1.0.0
  */
 @Controller
-class SolutionController(@Value("\${app.grading-system.path}") val gradingSystemUrl: String) {
+class SolutionController(@Value("\${app.grading-system.url}") val gradingSystemUrl: String) {
 
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
@@ -29,7 +29,7 @@ class SolutionController(@Value("\${app.grading-system.path}") val gradingSystem
     @Autowired
     private lateinit var solutionService: SolutionService
 
-    @Scheduled(fixedRate = CHECK_INTERVAL)
+//    @Scheduled(fixedRate = CHECK_INTERVAL)
     private fun checkSolutions() {
         restTemplate.errorHandler = GradingSystemErrorHandler()
 
