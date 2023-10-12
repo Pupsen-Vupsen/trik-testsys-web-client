@@ -18,21 +18,31 @@
     <script th:src="@{/2023/js/main.js}"></script>
 
     <!-- Yandex.Metrika counter -->
-    <script type="text/javascript" >
-        (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
-            m[i].l=1*new Date();
-            for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
-            k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+    <script type="text/javascript">
+        (function (m, e, t, r, i, k, a) {
+            m[i] = m[i] || function () {
+                (m[i].a = m[i].a || []).push(arguments)
+            };
+            m[i].l = 1 * new Date();
+            for (var j = 0; j < document.scripts.length; j++) {
+                if (document.scripts[j].src === r) {
+                    return;
+                }
+            }
+            k = e.createElement(t), a = e.getElementsByTagName(t)[0], k.async = 1, k.src = r, a.parentNode.insertBefore(k, a)
+        })
         (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
 
         ym(95194065, "init", {
-            clickmap:true,
-            trackLinks:true,
-            accurateTrackBounce:true,
-            webvisor:true
+            clickmap: true,
+            trackLinks: true,
+            accurateTrackBounce: true,
+            webvisor: true
         });
     </script>
-    <noscript><div><img src="https://mc.yandex.ru/watch/95194065" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+    <noscript>
+        <div><img src="https://mc.yandex.ru/watch/95194065" style="position:absolute; left:-9999px;" alt=""/></div>
+    </noscript>
     <!-- /Yandex.Metrika counter -->
 </head>
 <body>
@@ -124,7 +134,7 @@
             <button id="closeUploadTask" class="close-button" th:onclick="'closePopup(\'uploadTaskPopup\')'">
                 <i class="fa fa-close"></i>
             </button>
-            <h1>Загрузка задачи</h1>
+            <h1>Создание задачи</h1>
             <form class="uploadForm" id="uploadTaskForm" th:action="@{/2023/developer/task/create}" method="post"
                   enctype="multipart/form-data">
                 <div class="input-name">
@@ -136,48 +146,11 @@
                 </div>
                 <input type="text" name="description" placeholder="Описание задачи" required/>
                 <input type="text" name="accessToken" th:value="${accessToken}" style="display: none"/>
-
-                <div class="input-name">
-                    <h2>Тестовые поля</h2>
-                </div>
-                <div class="upload-file">
-                    <div class="inputs" id="testInputs"></div>
-                    <button type="button" onclick="addFileInput('testInputs')">Добавить файл</button>
-                </div>
-
-                <div class="input-name">
-                    <h2>Эталонное решение</h2>
-                </div>
-                <div class="upload-file">
-                    <input class="inputs" type="file" name="benchmark" accept=".qrs"/>
-                </div>
-
-                <div class="input-name">
-                    <h2>Упражнение EV3</h2>
-                </div>
-                <div class="upload-file">
-                    <input class="inputs" type="file" name="trainingEV3" accept=".qrs"/>
-                </div>
-
-                <div class="input-name">
-                    <h2>Упражнение TRIK</h2>
-                </div>
-                <div class="upload-file">
-                    <input class="inputs" type="file" name="trainingTRIK" accept=".qrs"/>
-                </div>
-<!--                <label class="upload-file">-->
-<!--                    Тестовые поля-->
-<!--                    <input type="file" multiple="multiple" name="tests" accept=".xml" required/>-->
-<!--                </label>-->
-<!--                <label class="upload-file">-->
-<!--                    Эталонное решение-->
-<!--                    <input type="file" name="benchmark" accept=".qrs"/>-->
-<!--                </label>-->
-<!--                <label class="upload-file">-->
-<!--                    Файл с упражнением-->
-<!--                    <input type="file" name="training" accept=".qrs"/>-->
-<!--                </label>-->
-                <input type="submit" id="uploadTask" value="Загрузить"/>
+                <!--                <div class="upload-file">-->
+                <!--                    <div class="inputs" id="testInputs"></div>-->
+                <!--                    <button type="button" onclick="addFileInput('testInputs')">Добавить файл</button>-->
+                <!--                </div>-->
+                <input type="submit" id="uploadTask" value="Создать"/>
             </form>
         </div>
     </div>
@@ -190,6 +163,7 @@
                 <th>Название</th>
                 <th>Описание</th>
                 <th>Публичная</th>
+                <th style="text-align: center">Загрузка файлов</th>
                 <th>Действия</th>
             </tr>
             <tr th:each="task: ${tasks}" th:id="'task' + ${task.id}">
@@ -198,7 +172,125 @@
                 <td th:text="${task.description}"></td>
                 <td th:text="${task.isPublic ? 'Да' : 'Нет'}"
                     style="width:10%"></td>
-                <td style=" width: 10%">
+                <td style="width: 10%">
+                    <div class="upload-ev3-popup popup" th:id="'uploadEv3Popup' + ${task.id}">
+                        <div class="popup-content">
+                            <button id="closeUploadEv3" class="close-button"
+                                    th:onclick="'closePopup(\'uploadEv3Popup' + ${task.id} + '\')'">
+                                <i class="fa fa-close"></i>
+                            </button>
+                            <h1>Загрузка файлов для EV3</h1>
+                            <h1 th:text="${task.id} + ': ' + ${task.name}"></h1>
+                            <form class="uploadForm" id="uploadEv3Form" th:action="@{/2023/developer/task/ev3/create}"
+                                  method="post"
+                                  enctype="multipart/form-data">
+                                <input type="number" name="parentTaskId" th:value="${task.id}" required
+                                       style="display: none"/>
+                                <input type="text" name="accessToken" th:value="${accessToken}" style="display: none"/>
+
+                                <div class="input-name">
+                                    <h2>Тестовые поля</h2>
+                                </div>
+                                <div class="upload-file">
+                                    <div class="inputs" th:id="'ev3Inputs' + ${task.id}">
+                                        <div>
+                                            <input type="file" name="tests" accept=".xml" required/>
+                                            <button type="button"
+                                                    th:onclick="'removeFileInput(this, \'ev3Inputs' + ${task.id} + '\')'">
+                                                Убрать
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <button type="button" th:onclick="'addFileInput(\'ev3Inputs' + ${task.id} + '\')'">
+                                        Добавить файл
+                                    </button>
+                                </div>
+
+                                <div class="input-name">
+                                    <h2>Упражнение</h2>
+                                </div>
+                                <div class="upload-file">
+                                    <div class="inputs" th:id="'ev3ExerciseInputs' + ${task.id}">
+                                        <div>
+                                            <input type="file" name="training" accept=".qrs"/>
+                                            <!--                                            <button type="button"-->
+                                            <!--                                                    th:onclick="'removeFileInput(this, \'ev3ExerciseInputs' + ${task.id} + '\')'">-->
+                                            <!--                                                Убрать-->
+                                            <!--                                            </button>-->
+                                        </div>
+                                    </div>
+                                </div>
+                                <input type="submit" value="Загрузить"/>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="upload-trik-popup popup" th:id="'uploadTrikPopup' + ${task.id}">
+                        <div class="popup-content">
+                            <button id="closeUploadTrik" class="close-button"
+                                    th:onclick="'closePopup(\'uploadTrikPopup' + ${task.id} + '\')'">
+                                <i class="fa fa-close"></i>
+                            </button>
+                            <h1>Загрузка файлов для TRIK</h1>
+                            <h1 th:text="${task.id} + ': ' + ${task.name}"></h1>
+                            <form class="uploadForm" id="uploadTrikForm" th:action="@{/2023/developer/task/trik/create}"
+                                  method="post"
+                                  enctype="multipart/form-data">
+                                <input type="number" name="parentTaskId" th:value="${task.id}" required
+                                       style="display: none"/>
+                                <input type="text" name="accessToken" th:value="${accessToken}" style="display: none"/>
+
+                                <div class="input-name">
+                                    <h2>Тестовые поля</h2>
+                                </div>
+                                <div class="upload-file">
+                                    <div class="inputs" th:id="'trikInputs' + ${task.id}">
+                                        <div>
+                                            <input type="file" name="tests" accept=".xml" required/>
+                                            <button type="button"
+                                                    th:onclick="'removeFileInput(this, \'trikInputs' + ${task.id} + '\')'">
+                                                Убрать
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <button type="button" th:onclick="'addFileInput(\'trikInputs' + ${task.id} + '\')'">
+                                        Добавить файл
+                                    </button>
+                                </div>
+
+                                <div class="input-name">
+                                    <h2>Упражнение</h2>
+                                </div>
+                                <div class="upload-file">
+                                    <div class="inputs" th:id="'trikExcercise' + ${task.id}">
+                                        <div>
+                                            <input type="file" name="training" accept=".qrs"/>
+                                            <!--                                            <button type="button"-->
+                                            <!--                                                    th:onclick="'removeFileInput(this, \'ev3ExerciseInputs' + ${task.id} + '\')'">-->
+                                            <!--                                                Убрать-->
+                                            <!--                                            </button>-->
+                                        </div>
+                                    </div>
+                                </div>
+                                <input type="submit" value="Загрузить"/>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="buttons">
+                        <button class="popup-button" title="Загрузить файлы для EV3"
+                                id="uploadEv3" th:onclick="'showPopup(\'uploadEv3Popup' + ${task.id} + '\')'"
+                                style="width: 50px">
+                            EV3
+                        </button>
+                        <button class="popup-button" title="Загрузить файлы для TRIK"
+                                id="uploadTrik" th:onclick="'showPopup(\'uploadTrikPopup' + ${task.id} + '\')'"
+                                style="width: 50px">
+                            TRIK
+                        </button>
+                    </div>
+                </td>
+                <td style="width: 10%">
                     <div class="infoPopup taskInfoPopup popup" th:id="'taskInfoPopup' + ${task.id}">
                         <div class="popup-content">
                             <button id="closeTaskInfo" class="close-button"
@@ -237,26 +329,14 @@
                                 <div class="input-name">
                                     <h2>Название Задачи</h2>
                                 </div>
-                                <input type="text" name="name" th:value="${task.name}" placeholder="Название задачи"
-                                       required/>
+                                <input type="text" name="name" th:value="${task.name}"
+                                       placeholder="Новое название задачи" required/>
                                 <div class="input-name">
                                     <h2>Описание Задачи</h2>
                                 </div>
                                 <input type="text" name="description" th:value="${task.description}"
-                                       placeholder="Описание задачи" required/>
+                                       placeholder="Новое описание задачи" required/>
                                 <input type="text" name="accessToken" th:value="${accessToken}" style="display: none"/>
-                                <label class="upload-file">
-                                    Тестовые поля
-                                    <input type="file" multiple="multiple" name="tests" accept=".xml"/>
-                                </label>
-                                <label class="upload-file">
-                                    Эталонное решение
-                                    <input type="file" name="benchmark" accept=".qrs"/>
-                                </label>
-                                <label class="upload-file">
-                                    Файл с упражнением
-                                    <input type="file" name="training" accept=".qrs"/>
-                                </label>
                                 <input type="submit" id="editTask" value="Изменить"/>
                             </form>
                         </div>
@@ -410,7 +490,8 @@
                             <i class="fa fa-paperclip"></i>
                         </button>
                         <button class="popup-button" title="Отозвать доступ к задаче"
-                                id="taskDetach" th:onclick="'showPopup(\'detachTaskFromAdminPopup' + ${task.id} + '\')'">
+                                id="taskDetach"
+                                th:onclick="'showPopup(\'detachTaskFromAdminPopup' + ${task.id} + '\')'">
                             <i class="fa fa-chain-broken"></i>
                         </button>
                         <button class="popup-button" title="Удалить задачу"
@@ -450,3 +531,42 @@
 </div>
 </body>
 </html>
+
+<style>
+    .upload-file {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: center;
+    }
+
+    .upload-file .inputs {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: center;
+    }
+
+    .upload-file .inputs div {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .upload-file .inputs div input {
+        width: 100%;
+    }
+
+    .upload-file .inputs div button {
+        width: 100px;
+    }
+
+    .upload-file button {
+        width: 100px;
+    }
+
+    .upload-file .inputs div:not(:last-child) {
+        margin-bottom: 10px;
+    }
+</style>

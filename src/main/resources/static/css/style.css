@@ -179,3 +179,18 @@ button:hover {
     align-content: center;
     text-align: center;
 }
+
+/*<div class="upload-file">*/
+/*<div class="inputs" th:id="'trikInputs' + ${task.id}">*/
+/*<div>*/
+/*<input type="file" name="tests" accept=".xml" required/>*/
+/*<button type="button"*/
+/*th:onclick="'removeFileInput(this, \'trikInputs' + ${task.id} + '\')'">*/
+/*                                                                      Убрать*/
+/*</button>*/
+/*</div>*/
+/*</div>*/
+/*<button type="button" th:onclick="'addFileInput(\'trikInputs' + ${task.id} + '\')'">*/
+/*                                                                                   Добавить файл*/
+/*</button>*/
+/*</div>*/

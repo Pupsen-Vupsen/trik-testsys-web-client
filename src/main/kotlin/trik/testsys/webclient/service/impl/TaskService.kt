@@ -38,6 +38,13 @@ class TaskService @Autowired constructor(
     }
 
     /**
+     * @since 1.1.0.14-alpha
+     */
+    fun remove(task: Task) {
+        taskRepository.delete(task)
+    }
+
+    /**
      * @author Roman Shishkin
      * @since 1.1.0
      */
@@ -123,8 +130,9 @@ class TaskService @Autowired constructor(
             task.hasTraining = true
         }
 
+        val savedTask = taskRepository.save(task)
         trikFileService.saveAll(trikFiles)
 
-        return taskRepository.save(task)
+        return savedTask
     }
 }

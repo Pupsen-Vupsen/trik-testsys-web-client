@@ -5,7 +5,7 @@ spring:
     open-in-view: on                                            # Enable JPA open-in-view
     defer-datasource-initialization: true
   datasource:
-    url: jdbc:mysql://${MYSQL_HOST:mysql_host}:3306/testsys_db   # Database URL
+    url: jdbc:mysql://${MYSQL_HOST:localhost}:3306/testsys_db   # Database URL
     username: testsys                                           # Database username
     password: p@ssw0rd                                          # Database password
     driver-class-name: com.mysql.cj.jdbc.Driver                 # Driver for MySQL
@@ -28,10 +28,18 @@ server:
 app:
   version: 1.0.2
   grading-system:
-    path: http://grading-system:8080/v3/grading-system
+    url: https://srv3.trikset.com/v1/grading-system
+    username: testsys_username
+    password: testsys_p@ssword_J1o85BtCibCARyC
   testsys:
+    path: http://localhost:8888/2023
     api:
-      prefix: /v1/testsys
+      prefix: /2023
+    data:
+      tests:
+        path: "${PWD}/data/tests"
+      trainings:
+        path: "${PWD}/data/trainings"
   avatar:
     path: "${PWD}/src/main/resources/static/avatars"
   utc:

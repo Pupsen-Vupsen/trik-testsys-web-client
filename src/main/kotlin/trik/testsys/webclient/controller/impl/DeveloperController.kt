@@ -42,6 +42,11 @@ class DeveloperController @Autowired constructor(
     @Value("\${app.grading-system.url}")
     private val gradingSystemUrl: String,
 
+    @Value("\${app.testsys.data.tests.path}")
+    private val testsPath: String,
+    @Value("\${app.testsys.data.trainings.path}")
+    private val trainingsPath: String,
+
     private val developerService: DeveloperService,
     private val webUserService: WebUserService,
     private val taskService: TaskService,
@@ -142,7 +147,17 @@ class DeveloperController @Autowired constructor(
             return modelAndView
         }
 
+        parentTask.childTasks.find { it.taskType == Task.TaskType.TRIK }?.let {
+            parentTask.childTasks.remove(it)
+            taskService.remove(it)
+            taskService.save(parentTask)
+        }
+
         val task = Task(parentTask, developer, Task.TaskType.TRIK)
+        taskService.save(task)
+
+        parentTask.childTasks.add(task)
+        taskService.save(parentTask)
 
         val trikTests = tests.map { TrikFile(task, it.originalFilename!!, TrikFile.Type.TEST) }
         val trikBenchmark = benchmark?.let { TrikFile(task, it.originalFilename!!, TrikFile.Type.BENCHMARK) }
@@ -198,7 +213,16 @@ class DeveloperController @Autowired constructor(
             return modelAndView
         }
 
+        parentTask.childTasks.find { it.taskType == Task.TaskType.EV3 }?.let {
+            parentTask.childTasks.remove(it)
+            taskService.remove(it)
+            taskService.save(parentTask)
+        }
+
         val task = Task(parentTask, developer, Task.TaskType.EV3)
+        taskService.save(task)
+        parentTask.childTasks.add(task)
+        taskService.save(parentTask)
 
         val trikTests = tests.map { TrikFile(task, it.originalFilename!!, TrikFile.Type.TEST) }
         val trikBenchmark = benchmark?.let { TrikFile(task, it.originalFilename!!, TrikFile.Type.BENCHMARK) }
@@ -215,6 +239,20 @@ class DeveloperController @Autowired constructor(
         modelAndView.addAllObjects(developerModel.asMap())
 
         return modelAndView
+    }
+
+    /**
+     * Saves file to filesystem
+     * @since 1.1.0.14-alpha
+     */
+    private fun saveFile(path: String, file: MultipartFile, id: Long) {
+        val savePath = String.format(path, id)
+        val fileBytes = file.bytes
+        val fileToSave = java.io.File(savePath)
+
+        fileToSave.parentFile.mkdirs()
+        fileToSave.createNewFile()
+        fileToSave.writeBytes(fileBytes)
     }
 
     @PostMapping("/task/delete")
@@ -299,50 +337,12 @@ class DeveloperController @Autowired constructor(
         return modelAndView
     }
 
-    private fun postTask(
-        name: String,
-        tests: List<MultipartFile>,
-        benchmark: MultipartFile?,
-        training: MultipartFile?
-    ): Boolean {
-        val restTemplate = RestTemplate()
-        restTemplate.errorHandler = GradingSystemErrorHandler()
-
-        val headers = HttpHeaders()
-        headers.contentType = MediaType.MULTIPART_FORM_DATA
-        headers.setBasicAuth("admin", "@dm1n") // TODO("Change to real credentials.")
-
-        val body = LinkedMultiValueMap<String, Any>()
-        body.add("taskName", name)
-
-        tests.forEach { body.add("files", it.resource) }
-//        benchmark?.let { body.add("benchmark", it.resource) }
-//        training?.let { body.add("training", it.resource) }
-
-        val url = "$gradingSystemUrl/tasks/create"
-        val responseInfo = restTemplate.postForEntity(
-            url,
-            HttpEntity(body, headers),
-            Map::class.java
-        )
-
-        if (responseInfo.statusCode != HttpStatus.OK) {
-            logger.error("Error while creating task '$name': ${responseInfo.statusCode}")
-            return false
-        }
-
-        return true
-    }
-
     @PostMapping("/task/edit")
     fun editTask(
         @RequestParam accessToken: String,
         @RequestParam taskId: Long,
         @RequestParam name: String,
         @RequestParam description: String,
-        @RequestBody tests: List<MultipartFile>,
-        @RequestBody benchmark: MultipartFile?,
-        @RequestBody training: MultipartFile?,
         modelAndView: ModelAndView
     ): ModelAndView {
         logger.info(accessToken, "Client trying to update task.")
@@ -360,25 +360,18 @@ class DeveloperController @Autowired constructor(
 
         modelAndView.addObject("accessToken", accessToken)
 
-        val testsCount = tests.size.toLong()
-        val task = taskService.update(taskId, name, description, tests, training, benchmark) ?: run {
-            logger.warn(accessToken, "Task with id '$taskId' not found.")
-
-            developerModelBuilder.postTaskMessage("Задача с id '$taskId' не найдена.")
+        val task = taskService.getTaskById(taskId) ?: run {
+            developerModelBuilder.postTaskMessage("Задача с id '${taskId}' не найдена.")
             val developerModel = developerModelBuilder.build()
             modelAndView.addAllObjects(developerModel.asMap())
 
             return modelAndView
         }
 
-//        val isTaskPosted = postTask(name, tests, benchmark, training)
-//        if (!isTaskPosted) {
-//            developerModelBuilder.postTaskMessage("Задача '${task.fullName}' не была загружена на сервер, попробуйте еще раз.")
-//            val developerModel = developerModelBuilder.build()
-//            modelAndView.addAllObjects(developerModel.asMap())
-//
-//            return modelAndView
-//        }
+        task.name = name
+        task.description = description
+        taskService.save(task)
+
         logger.info(accessToken, "Task '${task.getFullName()}' was successfully updated.")
 
         developerModelBuilder.postTaskMessage("Задача '${task.getFullName()}' была успешно загружена на сервер.")
@@ -588,12 +581,13 @@ class DeveloperController @Autowired constructor(
         val webUser = developer.webUser
 
         val publicTasks = taskService.getAllPublic()
+        val parentTasks = developer.tasks.filter { it.taskRole == Task.TaskRole.PARENT }
 
         val developerModel = DeveloperModel.Builder()
             .accessToken(webUser.accessToken)
             .username(webUser.username)
             .postTaskMessage(postTaskMessage)
-            .tasks(developer.tasks)
+            .tasks(parentTasks)
             .publicTasks(publicTasks)
             .admins(adminService.getAll())
             .additionalInfo(webUser.additionalInfo)

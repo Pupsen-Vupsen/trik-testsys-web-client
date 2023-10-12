@@ -30,7 +30,7 @@ function addFileInput(id) {
     fileInputs.appendChild(newInputDiv);
 }
 
-function removeFileInput(inputDiv) {
+function removeFileInput(inputDiv, id) {
     const fileInputs = document.getElementById(id);
     fileInputs.removeChild(inputDiv.parentElement);
 }
