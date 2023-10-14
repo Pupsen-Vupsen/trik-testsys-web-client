@@ -6,26 +6,28 @@
 </head>
 <body>
 <div class="container">
-    <h1>Панель ученика</h1>
-    <div class="created web_user">
-        <p>Пользователь создан!</p>
+    <h1>Кабинет ученика</h1>
+    <div class="created" th:style="${isCreated}? 'display: none;' : 'display: block;'">
+        <p th:text="${message}"/>
+    </div>
+
+    <div class="created web_user" th:style="${isCreated}? 'display: flex;' : 'display: none;'">
+        <p>Решение загружено!</p>
         <table>
             <tr>
-                <th>ID</th>
-                <th>Имя</th>
-                <th>Код-доступа</th>
+                <th>ID решения</th>
+                <th>Название задачи</th>
             </tr>
             <tr>
                 <td th:text="${id}"></td>
-                <td th:text="${username}"></td>
-                <td class="token" th:text="${accessToken}"></td>
+                <td th:text="${taskName}"></td>
             </tr>
         </table>
     </div>
-    <form class="back" action="/2023/student" method="get">
+    <form class="back" action="/student/" method="get">
         <input style="display: none" type="text" name="accessToken" placeholder="Access token"
                th:value="${accessToken}" readonly/>
-        <input type="submit" value="Перейти в личный кабинет"/>
+        <input type="submit" value="Назад"/>
     </form>
 </div>
 </body>
@@ -94,9 +96,5 @@
     table th {
         background-color: #4CAF50;
         color: white;
-    }
-
-    .token {
-        font-family: monospace;
     }
 </style>

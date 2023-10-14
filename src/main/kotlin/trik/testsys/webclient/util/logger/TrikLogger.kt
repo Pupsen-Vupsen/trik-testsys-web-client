@@ -10,38 +10,30 @@ import trik.testsys.webclient.util.exception.impl.TrikIllegalStateException
  *
  * Implementation of custom logger from Trik TestSys components. Uses [Logger].
  */
-class TrikLogger<T>(clazz: Class<T>) {
-
-    private val logger = LoggerFactory.getLogger(clazz)
-
-    fun info(message: String) = logger.info(message)
-
-    fun warn(message: String) = logger.warn(message)
-
-    fun error(message: String) = logger.error(message)
+class TrikLogger<T>(clazz: Class<T>): Logger by LoggerFactory.getLogger(clazz) {
 
     fun info(userAccessToken: String, message: String) {
         val fullMessage = createFullMessage(userAccessToken, message)
 
-        logger.info(fullMessage)
+        this.info(fullMessage)
     }
 
     fun warn(userAccessToken: String, message: String) {
         val fullMessage = createFullMessage(userAccessToken, message)
 
-        logger.warn(fullMessage)
+        this.warn(fullMessage)
     }
 
     fun error(userAccessToken: String, message: String) {
         val fullMessage = createFullMessage(userAccessToken, message)
 
-        logger.error(fullMessage)
+        this.error(fullMessage)
     }
 
     fun errorAndThrow(userAccessToken: String, message: String): Nothing {
         val fullMessage = createFullMessage(userAccessToken, message)
 
-        logger.error(fullMessage)
+        this.error(fullMessage)
         throw TrikIllegalStateException("Error: $fullMessage")
     }
 

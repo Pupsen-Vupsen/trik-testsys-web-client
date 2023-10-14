@@ -17,16 +17,14 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 @Configuration
 @EnableWebSecurity
 @EnableScheduling
-class Configuration @Autowired constructor(
-    @Value("\${app.testsys.api.prefix}") private val serverPrefix: String,
-) : WebMvcConfigurerAdapter() {
+class Configuration : WebMvcConfigurerAdapter() {
 
     override fun addResourceHandlers(registry: ResourceHandlerRegistry) {
         registry.addResourceHandler(
-            "$serverPrefix/img/**",
-            "$serverPrefix/css/**",
-            "$serverPrefix/js/**",
-            "$serverPrefix/avatars/**"
+            "/img/**",
+            "/css/**",
+            "/js/**",
+            "/avatars/**"
         ).addResourceLocations(
             "classpath:/static/img/",
             "classpath:/static/css/",

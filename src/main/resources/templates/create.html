@@ -12,7 +12,7 @@
         <p>Скопируйте и сохраните Ваш Код-доступа Организатора: <span class="token" th:text="${accessToken}"></span>.</p>
         <p>При утере Кода-доступа Организатора, Вы не сможете восстановить его, поэтому, пожалуйста, сохраните его в надёжном месте.</p>
         <p>Для вашего удобства можете добавить <a rel="sidebar" id="bookmarkme" href="#">ссылку</a> в закладки браузера, чтобы иметь возможность быстро перейти к странице создания группы.</p>
-        <form th:action="@{/2023/admin}" method="get" class="creation">
+        <form th:action="@{/admin}" method="get" class="creation">
             <p><input type="checkbox" required/> Подтверждаю, что сохранил Код-доступа Организатора</p>
             <input type="hidden" name="accessToken" th:value="${accessToken}" readonly/>
             <input type="submit" value="Перейти в кабинет Организатора" required/>

@@ -18,7 +18,7 @@ import trik.testsys.webclient.util.fp.Either
 import java.time.LocalDateTime
 
 @RestController
-@RequestMapping("\${app.testsys.api.prefix}/admin")
+@RequestMapping("/admin")
 @Suppress("UnnecessaryVariable", "DuplicatedCode")
 class AdminController @Autowired constructor(
     @Value("\${app.grading-system.url}")
@@ -860,7 +860,6 @@ class AdminController @Autowired constructor(
         private val logger = TrikLogger(this::class.java)
 
         private const val ADMIN_VIEW_NAME = "admin"
-        private const val SERVER_PREFIX = "https://testsys.trikset.com/2023"
         private val REDIRECT_VIEW = TrikRedirectView("/admin")
     }
 }

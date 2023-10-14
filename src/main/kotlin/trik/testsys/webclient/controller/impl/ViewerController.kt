@@ -22,7 +22,7 @@ import trik.testsys.webclient.util.logger.TrikLogger
  * @since 1.1.0
  */
 @RestController
-@RequestMapping("\${app.testsys.api.prefix}/viewer")
+@RequestMapping("/viewer")
 class ViewerController @Autowired constructor(
     private val webUserService: WebUserService,
     private val groupService: GroupService,
@@ -228,7 +228,6 @@ class ViewerController @Autowired constructor(
         private val logger = TrikLogger(this::class.java)
 
         private const val VIEWER_VIEW_NAME = "viewer"
-        private const val SERVER_PREFIX = "https://testsys.trikset.com/2023"
         private val REDIRECT_VIEW = TrikRedirectView("/viewer")
     }
 }

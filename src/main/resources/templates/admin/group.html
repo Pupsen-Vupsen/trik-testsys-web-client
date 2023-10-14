@@ -24,7 +24,7 @@
         </table>
     </div>
     <div class="student-generation creation">
-        <form id="student-creation" th:action="@{/2023/admin/student/create}" method="get">
+        <form id="student-creation" th:action="@{/admin/student/create}" method="get">
             <p>Сгенерируйте учеников</p>
             <input style="display: none" type="text" name="accessToken" placeholder="Access token"
                    th:value="${accessToken}" readonly/>
@@ -42,7 +42,7 @@
         </form>
     </div>
     <div class="get-table">
-        <form class="" action="/2023/admin/group/table" method="get">
+        <form class="" action="/admin/group/table" method="get">
             <input style="display: none" type="text" name="accessToken" placeholder="Access token"
                    th:value="${accessToken}" readonly/>
             <input style="display: none" type="text" name="groupAccessToken" placeholder="Group access token"
@@ -66,7 +66,7 @@
                 <td th:text="${task.description}"></td>
                 <td th:text="${task.solutions.size()}"></td>
                 <td style="width: 10%">
-                    <form th:action="@{/2023/admin/task}" method="get">
+                    <form th:action="@{/admin/task}" method="get">
                         <input style="display: none" type="text" name="accessToken" placeholder="Access token"
                                th:value="${accessToken}" readonly/>
                         <input style="display: none" type="text" name="groupAccessToken"
@@ -94,7 +94,7 @@
                 <td th:text="${student.webUser.username}"></td>
                 <td class="token" th:text="${student.webUser.accessToken}"></td>
                 <td style="width: 10%">
-                    <form th:action="@{/2023/admin/student}" method="get">
+                    <form th:action="@{/admin/student}" method="get">
                         <input style="display: none" type="text" name="accessToken" placeholder="Access token"
                                th:value="${accessToken}" readonly/>
                         <input style="display: none" type="text" name="groupAccessToken"
@@ -108,7 +108,7 @@
             </tr>
         </table>
     </div>
-    <form class="back" action="/2023/admin" method="get">
+    <form class="back" action="/admin" method="get">
         <input style="display: none" type="text" name="accessToken" placeholder="Access token"
                th:value="${accessToken}" readonly/>
         <input type="submit" value="Назад"/>

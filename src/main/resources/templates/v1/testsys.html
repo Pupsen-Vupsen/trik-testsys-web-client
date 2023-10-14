@@ -11,7 +11,7 @@
         <p>Здравствуйте! Здесь вы можете получить доступ к тестирующей системе TRIK.</p>
         <p>Для этого вам необходимо ввести код-доступа, который вы получили от администратора в поле ниже.</p>
         <div class="creation">
-            <form th:action="@{/2023/access}" method="get">
+            <form th:action="@{/access}" method="get">
                 <input type="text" name="accessToken" placeholder="Код-доступа" required/>
                 <input type="submit" value="Получить доступ!" required/>
             </form>

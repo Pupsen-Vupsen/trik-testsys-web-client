@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <title>Кабинет районного Наблюдателя</title>
-    <link rel="icon" th:href="@{/2023/img/trik_testsys_logo.ico}">
-    <link rel="stylesheet" th:href="@{/2023/css/style.css}"/>
-    <link rel="stylesheet" th:href="@{/2023/css/popup.css}"/>
-    <link rel="stylesheet" th:href="@{/2023/css/table.css}"/>
+    <link rel="icon" th:href="@{/img/trik_testsys_logo.ico}">
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+    <link rel="stylesheet" th:href="@{/css/popup.css}"/>
+    <link rel="stylesheet" th:href="@{/css/table.css}"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js">
     </script>
-    <script th:src="@{/2023/js/popup.js}"></script>
+    <script th:src="@{/js/popup.js}"></script>
 
     <!-- Yandex.Metrika counter -->
     <script type="text/javascript" >
@@ -35,11 +35,11 @@
 <div class="container">
     <div class="header">
         <div class="page-type">
-            <img th:src="@{/2023/img/trik_testsys_logo.svg}" alt="logo">
+            <img th:src="@{/img/trik_testsys_logo.svg}" alt="logo">
             <p>Кабинет районного Наблюдателя</p>
         </div>
         <div class="exit">
-            <form th:action="@{/2023}" method="get">
+            <form th:action="@{/}" method="get">
                 <input type="submit" value="Выйти"/>
             </form>
         </div>
@@ -51,7 +51,7 @@
                 <i class="fa fa-close"></i>
             </button>
             <h1>Редактирование данных</h1>
-            <form class="uploadForm" th:action="@{/2023/viewer/info/change}" method="post">
+            <form class="uploadForm" th:action="@{/viewer/info/change}" method="post">
                 <input type="text" name="accessToken" th:value="${accessToken}" placeholder="Код-доступа" required
                        style="display: none"/>
                 <div class="input-name">
@@ -71,7 +71,7 @@
     <div class="main">
         <div class="info">
             <div class="avatar-container">
-                <img th:src="@{/2023/img/trik_testsys_logo.svg}" alt="avatar">
+                <img th:src="@{/img/trik_testsys_logo.svg}" alt="avatar">
                 <div class="username">
                     <p th:text="${username}"></p>
                 </div>

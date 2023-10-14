@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <title>Кабинет Организатора</title>
-    <link rel="icon" th:href="@{/2023/img/trik_testsys_logo.ico}">
-    <link rel="stylesheet" th:href="@{/2023/css/style.css}"/>
-    <link rel="stylesheet" th:href="@{/2023/css/popup.css}"/>
-    <link rel="stylesheet" th:href="@{/2023/css/table.css}"/>
+    <link rel="icon" th:href="@{/img/trik_testsys_logo.ico}">
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+    <link rel="stylesheet" th:href="@{/css/popup.css}"/>
+    <link rel="stylesheet" th:href="@{/css/table.css}"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
@@ -33,11 +33,11 @@
 <div class="container">
     <div class="header">
         <div class="page-type">
-            <img th:src="@{/2023/img/trik_testsys_logo.svg}" alt="logo">
+            <img th:src="@{/img/trik_testsys_logo.svg}" alt="logo">
             <p>Кабинет Организатора</p>
         </div>
         <div class="exit">
-            <form th:action="@{/2023}" method="get">
+            <form th:action="@{/}" method="get">
                 <input type="submit" value="Выйти"/>
             </form>
         </div>
@@ -50,7 +50,7 @@
                 <i class="fa fa-close"></i>
             </button>
             <h1>Редактирование данных</h1>
-            <form class="uploadForm" th:action="@{/2023/admin/info/change}" method="post">
+            <form class="uploadForm" th:action="@{/admin/info/change}" method="post">
                 <input type="text" name="accessToken" th:value="${accessToken}" placeholder="Код-доступа" required
                        style="display: none"/>
                 <div class="input-name">
@@ -70,7 +70,7 @@
     <div class="main">
         <div class="info">
             <div class="avatar-container">
-                <img th:src="@{/2023/img/trik_testsys_logo.svg}" alt="avatar">
+                <img th:src="@{/img/trik_testsys_logo.svg}" alt="avatar">
                 <div class="username">
                     <p th:text="${username}"></p>
                 </div>
@@ -127,7 +127,7 @@
                 <i class="fa fa-close"></i>
             </button>
             <h1>Создание Группы</h1>
-            <form class="uploadForm" th:action="@{/2023/admin/group/create}" method="post">
+            <form class="uploadForm" th:action="@{/admin/group/create}" method="post">
                 <div class="input-name">
                     <h2>Название Группы</h2>
                 </div>
@@ -206,7 +206,7 @@
                             </button>
 
                             <h1>Редактирование Группы</h1>
-                            <form class="uploadForm" th:action="@{/2023/admin/group/edit}" method="post">
+                            <form class="uploadForm" th:action="@{/admin/group/edit}" method="post">
                                 <input type="text" name="groupAccessToken" th:value="${group.accessToken}"
                                        style="display: none"/>
                                 <div class="input-name">
@@ -238,7 +238,7 @@
                             <h1>Изменение тегов Группы</h1>
                             <h1 th:text="${group.id} + ': ' + ${group.name}"></h1>
                             <div class="popup-forms">
-                                <form class="uploadForm" th:action="@{/2023/admin/group/labels/add}"
+                                <form class="uploadForm" th:action="@{/admin/group/labels/add}"
                                       method="post">
                                     <p>Новый тег:</p>
                                     <input type="text" name="newLabel" placeholder="Новый тег"
@@ -257,7 +257,7 @@
                                     </select>
                                     <input type="submit" value="Добавить"/>
                                 </form>
-                                <form class="uploadForm" th:action="@{/2023/admin/group/labels/delete}"
+                                <form class="uploadForm" th:action="@{/admin/group/labels/delete}"
                                       method="post">
                                     <p>Выберите теги для удаления:</p>
                                     <input type="text" name="groupAccessToken" th:value="${group.accessToken}"
@@ -289,7 +289,7 @@
                             <p>В Группе состоит <span th:text="${group.students.size()}"></span> участников.</p>
                             <p>В Группе находится <span th:text="${group.tasks.size()}"></span> задач.</p>
                             <p>Вы уверены, что хотите удалить Группу?</p>
-                            <form class="uploadForm" th:action="@{/2023/admin/group/delete}" method="post">
+                            <form class="uploadForm" th:action="@{/admin/group/delete}" method="post">
                                 <input type="text" name="groupAccessToken" th:value="${group.accessToken}"
                                        style="display: none"/>
                                 <input type="text" name="accessToken" th:value="${accessToken}"
@@ -321,7 +321,7 @@
                                 th:onclick="'deleteGroupPopup(\'' + ${group.id} + '\')'">
                             <i class="fa fa-trash"></i>
                         </button>
-                        <form th:action="@{/2023/admin/group}" method="get">
+                        <form th:action="@{/admin/group}" method="get">
                             <input type="text" name="groupAccessToken" th:value="${group.accessToken}"
                                    style="display: none"/>
                             <input type="text" name="accessToken" th:value="${accessToken}"
@@ -387,7 +387,7 @@
                             <h1>Добавление задачи в Группы</h1>
                             <h1 th:text="${task.id} + ': ' + ${task.name}"></h1>
                             <p>Выберите Группы, в которые нужно добавить задачу:</p>
-                            <form class="uploadForm" th:action="@{/2023/admin/task/groups/add}"
+                            <form class="uploadForm" th:action="@{/admin/task/groups/add}"
                                   method="post">
                                 <input type="text" name="taskId" th:value="${task.id}"
                                        style="display: none"/>
@@ -414,7 +414,7 @@
                             <h1>Удаление задачи из Групп</h1>
                             <h1 th:text="${task.id} + ': ' + ${task.name}"></h1>
                             <p>Выберите Группы, из которых нужно удалить задачу:</p>
-                            <form class="uploadForm" th:action="@{/2023/admin/task/groups/remove}"
+                            <form class="uploadForm" th:action="@{/admin/task/groups/remove}"
                                   method="post">
                                 <input type="text" name="taskId" th:value="${task.id}"
                                        style="display: none"/>
@@ -460,7 +460,7 @@
     <!--            </button>-->
     <!--            <h1>Создание наблюдателя</h1>-->
     <!--            <form class="uploadForm" id="create-viewer-form"-->
-    <!--                  th:action="@{/2023/admin/viewer/create}" method="post">-->
+    <!--                  th:action="@{/admin/viewer/create}" method="post">-->
     <!--                <input type="text" name="accessToken" th:value="${accessToken}"-->
     <!--                       placeholder="Код-доступа" required-->
     <!--                       style="display: none"/>-->

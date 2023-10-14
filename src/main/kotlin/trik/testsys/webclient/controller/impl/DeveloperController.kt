@@ -36,7 +36,7 @@ import java.time.LocalDateTime
  * @since 1.1.0
  */
 @RestController
-@RequestMapping("\${app.testsys.api.prefix}/developer")
+@RequestMapping("/developer")
 @Suppress("UnnecessaryVariable")
 class DeveloperController @Autowired constructor(
     @Value("\${app.grading-system.url}")

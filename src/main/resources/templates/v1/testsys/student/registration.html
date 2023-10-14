@@ -12,7 +12,7 @@
         </p>
         <p>Для регистрации в группе, введите имя пользователя (строка длиной до 50 символов) для этой группы.</p>
         <div class="creation">
-            <form th:action="@{/2023/student/create}" method="post">
+            <form th:action="@{/student/create}" method="post">
                 <input type="hidden" name="groupAccessToken" th:value="${groupAccessToken}" readonly/>
                 <input type="text" name="username" placeholder="Имя пользователя" required/>
                 <input type="submit" value="Зарегистрироваться" required/>

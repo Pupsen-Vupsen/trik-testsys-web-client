@@ -14,7 +14,7 @@
     </div>
     <div class="groups">
         <div class="creation">
-            <form th:action="@{/2023/admin/group/create}" method="post">
+            <form th:action="@{/admin/group/create}" method="post">
                 <p>Создать группу</p>
                 <input style="display: none" type="text" name="accessToken" placeholder="Access token"
                        th:value="${accessToken}" readonly/>
@@ -37,7 +37,7 @@
                     <td style="font-family: monospace" th:text="${group.accessToken}"></td>
                     <td th:text="${group.students.size()}"></td>
                     <td>
-                        <form class="button" th:action="@{/2023/admin/group}" method="get">
+                        <form class="button" th:action="@{/admin/group}" method="get">
                             <input style="display: none" type="text" name="accessToken" placeholder="Access token"
                                    th:value="${accessToken}" readonly/>
                             <input style="display: none" type="text" name="groupAccessToken"

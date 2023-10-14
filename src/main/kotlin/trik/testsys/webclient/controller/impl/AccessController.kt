@@ -19,7 +19,6 @@ import java.util.*
 
 
 @RestController
-@RequestMapping("\${app.testsys.api.prefix}")
 class AccessController @Autowired constructor(
     private val webUserService: WebUserService,
     private val superUserService: SuperUserService,

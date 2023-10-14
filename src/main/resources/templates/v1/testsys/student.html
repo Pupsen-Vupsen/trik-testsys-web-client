@@ -42,7 +42,7 @@
         </table>
     </div>
     <div class="creation">
-        <form id="task-creation" th:action="@{/2023/student/solution/upload}" method="post" enctype="multipart/form-data">
+        <form id="task-creation" th:action="@{/student/solution/upload}" method="post" enctype="multipart/form-data">
             <p>Загрузите решение</p>
             <input style="display: none" type="text" name="accessToken" placeholder="Access token"
                    th:value="${accessToken}" readonly/>

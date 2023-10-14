@@ -23,7 +23,7 @@ import trik.testsys.webclient.service.impl.ViewerService
 import trik.testsys.webclient.util.logger.TrikLogger
 
 
-@RequestMapping("\${app.testsys.api.prefix}/superuser")
+@RequestMapping("/superuser")
 @RestController
 class SuperUserController @Autowired constructor(
     private val superUserService: SuperUserService,

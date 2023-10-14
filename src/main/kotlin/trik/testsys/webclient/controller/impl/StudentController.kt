@@ -25,7 +25,7 @@ import trik.testsys.webclient.service.impl.*
 import java.time.LocalDateTime
 
 @RestController
-@RequestMapping("\${app.testsys.api.prefix}/student")
+@RequestMapping("/student")
 class StudentController(@Value("\${app.grading-system.url}") val gradingSystemUrl: String) {
 
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)

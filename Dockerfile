@@ -1,9 +1,6 @@
 FROM ubuntu:18.04
 MAINTAINER Roman Shishkin <romashkin.2001@yandex.ru>
 
-#Setting directories args
-ARG APP_DIR=web-client
-
 #Updating system and installing packages
 WORKDIR /
 ARG DEBIAN_FRONTEND=noninteractive
@@ -27,6 +24,16 @@ ENV LANGUAGE ru_RU:ru
 ENV LC_LANG ru_RU.UTF-8
 ENV LC_ALL ru_RU.UTF-8
 
+#Setting directories args
+ARG APP_DIR=web-client
+ARG CONFIGS_DIR=config
+
+#Copying configs
+WORKDIR /$APP_DIR/$CONFIGS_DIR
+ARG APP_PROPS_FILE=src/main/resources/application.yml
+ARG PROPS=application.yml
+COPY $APP_PROPS_FILE $PROPS
+
 #Copying application
 WORKDIR /$APP_DIR
 ARG JAR_FILE=build/libs/trik-testsys-web-client-1.1.0.3.jar
@@ -35,4 +42,4 @@ COPY $JAR_FILE $APP
 
 #Running application
 EXPOSE 8888
-ENTRYPOINT java -jar app.jar
+ENTRYPOINT java -jar -Dspring.config.location=/$APP_DIR/$CONFIGS_DIR app.jar

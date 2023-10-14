@@ -13,7 +13,7 @@
         <p>Для регистрации в системе, необходимо ввести псевдоним, с помощью которого Наблюдатель сможет Вас идентифицировать.</p>
         <p>В дальнейшем, Вы не сможете изменить свой псевдоним, поэтому, пожалуйста, вводите его внимательно.</p>
         <div class="creation">
-            <form th:action="@{/2023/admin/create}" method="post">
+            <form th:action="@{/admin/create}" method="post">
                 <input type="hidden" name="accessToken" th:value="${accessToken}" readonly/>
                 <input type="text" name="username" placeholder="Имя пользователя" required/>
                 <input type="submit" value="Зарегистрироваться" required/>

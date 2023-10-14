@@ -1,3 +1,5 @@
+
+
 spring:
   jpa:
     hibernate:
@@ -24,17 +26,16 @@ logging:
       max-history: 31                                           # Stores a month of logs
 server:
   port: 8888                                                    # Entrypoint
+  servlet:
+    context-path: /2023
 
 app:
-  version: 1.0.2
+  version: 1.1.0
   grading-system:
     url: https://srv3.trikset.com/v1/grading-system
     username: testsys_username
     password: testsys_p@ssword_J1o85BtCibCARyC
   testsys:
-    path: http://localhost:8888/2023
-    api:
-      prefix: /2023
     data:
       tests:
         path: "${PWD}/data/tests"
