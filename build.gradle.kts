@@ -40,6 +40,8 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("com.beust:klaxon:5.6")
 
+    implementation("com.squareup.okhttp3:okhttp:4.2.0")
+
     implementation("com.h2database:h2")
     testImplementation("org.springframework.security:spring-security-test")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
