@@ -7,14 +7,13 @@ import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.servlet.ModelAndView
 import trik.testsys.webclient.controller.TrikUserController
-
 import trik.testsys.webclient.entity.impl.*
 import trik.testsys.webclient.model.impl.AdminModel
 import trik.testsys.webclient.models.ResponseMessage
 import trik.testsys.webclient.service.impl.*
 import trik.testsys.webclient.util.TrikRedirectView
-import trik.testsys.webclient.util.logger.TrikLogger
 import trik.testsys.webclient.util.fp.Either
+import trik.testsys.webclient.util.logger.TrikLogger
 import java.time.LocalDateTime
 
 @RestController
