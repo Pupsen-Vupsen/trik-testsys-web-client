@@ -54,6 +54,7 @@ class WebUser(
      */
     @Column(nullable = true, columnDefinition = "DATETIME")
     var lastLoginDate: LocalDateTime? = null
+
     /**
      * @author Roman Shishkin
      * @since 1.1.0

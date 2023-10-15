@@ -36,7 +36,6 @@ object AccessTokenGenerator {
         return digest.fold("") { str, it -> str + "%02x".format(it) }
     }
 
-    // generate token like a61d-e3f2-4b3a-8b1c
     private fun generateStudentAccessToken(word: String): String {
         val uuid = UUID.randomUUID().toString()
         val middleUUID = uuid.substringAfter("-").substringBeforeLast("-")

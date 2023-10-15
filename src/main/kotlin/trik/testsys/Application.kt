@@ -1,10 +1,9 @@
 package trik.testsys
 
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.web.servlet.MultipartConfigFactory
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.util.unit.DataSize
@@ -15,10 +14,7 @@ import javax.servlet.MultipartConfigElement
 
 @SpringBootApplication
 @Configuration
-class Application @Autowired constructor(
-    @Value("\${app.grading-system.url}") private val gradingSystemUrl: String
-
-) {
+class Application : SpringBootServletInitializer() {
 
     @Bean
     fun multipartConfigElement(): MultipartConfigElement {
@@ -32,8 +28,6 @@ class Application @Autowired constructor(
         @JvmStatic
         fun main(args: Array<String>) {
             SpringApplication.run(Application::class.java, *args)
-            logger.info("Application started.")
-
         }
 
         private val logger = TrikLogger(Application::class.java)

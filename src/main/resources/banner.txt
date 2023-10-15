@@ -1,0 +1,21 @@
+${AnsiColor.BLUE} _____                                                 _____ ${AnsiStyle.NORMAL}
+${AnsiColor.BLUE}( ___ )                                               ( ___ )${AnsiStyle.NORMAL}
+${AnsiColor.BLUE} |   |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|   | ${AnsiStyle.NORMAL}
+${AnsiColor.BLUE} |   |                                                 |   | ${AnsiStyle.NORMAL}
+${AnsiColor.BLUE} |   |${AnsiColor.BRIGHT_GREEN}              ______ ____   ____ __ __           ${AnsiColor.BLUE}|   | ${AnsiStyle.NORMAL}
+${AnsiColor.BLUE} |   |${AnsiColor.BRIGHT_GREEN}             /_  __// __ \ /  _// //_/           ${AnsiColor.BLUE}|   | ${AnsiStyle.NORMAL}
+${AnsiColor.BLUE} |   |${AnsiColor.BRIGHT_GREEN}              / /  / /_/ / / / / ,<              ${AnsiColor.BLUE}|   | ${AnsiStyle.NORMAL}
+${AnsiColor.BLUE} |   |${AnsiColor.BRIGHT_GREEN}             / /  / _, _/_/ / / /| |             ${AnsiColor.BLUE}|   | ${AnsiStyle.NORMAL}
+${AnsiColor.BLUE} |   |${AnsiColor.BRIGHT_GREEN}            /_/  /_/ |_|/___//_/ |_|             ${AnsiColor.BLUE}|   | ${AnsiStyle.NORMAL}
+${AnsiColor.BLUE} |   |${AnsiColor.BRIGHT_GREEN}     ______             __  _____                ${AnsiColor.BLUE}|   | ${AnsiStyle.NORMAL}
+${AnsiColor.BLUE} |   |${AnsiColor.BRIGHT_GREEN}    /_  __/___   _____ / /_/ ___/ __  __ _____   ${AnsiColor.BLUE}|   | ${AnsiStyle.NORMAL}
+${AnsiColor.BLUE} |   |${AnsiColor.BRIGHT_GREEN}     / /  / _ \ / ___// __/\__ \ / / / // ___/   ${AnsiColor.BLUE}|   | ${AnsiStyle.NORMAL}
+${AnsiColor.BLUE} |   |${AnsiColor.BRIGHT_GREEN}    / /  /  __/(__  )/ /_ ___/ // /_/ /(__  )    ${AnsiColor.BLUE}|   | ${AnsiStyle.NORMAL}
+${AnsiColor.BLUE} |   |${AnsiColor.BRIGHT_GREEN}   /_/   \___//____/ \__//____/ \__, //____/     ${AnsiColor.BLUE}|   | ${AnsiStyle.NORMAL}
+${AnsiColor.BLUE} |   |${AnsiColor.BRIGHT_GREEN}                               /____/            ${AnsiColor.BLUE}|   | ${AnsiStyle.NORMAL}
+${AnsiColor.BLUE} |   |                                                 |   | ${AnsiStyle.NORMAL}
+${AnsiColor.BLUE} |___|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|___| ${AnsiStyle.NORMAL}
+${AnsiColor.BLUE}(_____)                                               (_____)${AnsiStyle.NORMAL}
+
+${AnsiColor.BRIGHT_GREEN} :: TRIK TestSys Web Client ::${AnsiStyle.NORMAL}                      (v${app.version})
+${AnsiColor.BRIGHT_GREEN} :: Spring Boot ::${AnsiStyle.NORMAL}                                 ${spring-boot.formatted-version}
