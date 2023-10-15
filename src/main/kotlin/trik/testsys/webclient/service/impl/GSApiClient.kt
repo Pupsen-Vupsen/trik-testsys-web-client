@@ -3,20 +3,18 @@ package trik.testsys.webclient.service.impl
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpHeaders
-import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Component
 import org.springframework.web.multipart.MultipartFile
 import trik.testsys.webclient.service.TrikApiClient
 import trik.testsys.webclient.util.logger.TrikLogger
-import java.io.File
-import javax.xml.crypto.OctetStreamData
 
 /**
  * @author Roman Shishkin
  * @since 1.1.0.14-alpha
  */
 @Component
+@Suppress("UnnecessaryVariable", "unused")
 class GSApiClient @Autowired constructor(
     @Value("\${app.grading-system.url}") private val url: String,
     @Value("\${app.grading-system.username}") private val username: String,
@@ -30,40 +28,33 @@ class GSApiClient @Autowired constructor(
      * Gets problem info by id. Response returns JSON contains:
      * fileIds array, info (trikInfo) and problem id.
      */
-    fun getProblemById(id: Long): ResponseEntity<ProblemDto> {
-        val result = get("$PROBLEMS_ENDPOINT$id", ProblemDto::class.java)
+    fun getProblem(id: Long): ProblemDto? {
+        val result = get("$PROBLEMS_ENDPOINT$id", ProblemDto::class.java) ?: return null
         logger.info("Response: ${result.body}")
 
-        return result
+        return result.body
     }
 
     /**
      * Updates problem, changes problem info (trikInfo) and problem files.
      */
-    fun putProblemById(id: Long, info: String, files: List<MultipartFile>): ResponseEntity<ProblemDto> {
-        val body = mapOf(
-            "info" to info,
-            "files" to files
-        )
-        val result = put("$PROBLEMS_ENDPOINT$id", body, ProblemDto::class.java)
+    fun putProblem(id: Long, info: String, files: List<MultipartFile>): ProblemDto? {
+        val body = ProblemBody(info, files)
+        val result = put("$PROBLEMS_ENDPOINT$id", body, ProblemDto::class.java) ?: return null
         logger.info("Response: ${result.body}")
 
-        return result
+        return result.body
     }
 
     /**
      * Creates new problem.
      */
-    fun postProblem(info: String, files: List<MultipartFile>): ResponseEntity<ProblemDto> {
-        val body = mapOf(
-            "info" to info,
-            "files" to files
-        )
-
-        val result = post(PROBLEMS_ENDPOINT, body, ProblemDto::class.java)
+    fun postProblem(info: String, files: List<MultipartFile>): ProblemDto? {
+        val body = ProblemBody(info, files)
+        val result = post(PROBLEMS_ENDPOINT, body, ProblemDto::class.java) ?: return null
         logger.info("Response: ${result.body}")
 
-        return result
+        return result.body
     }
     //endregion
 
@@ -71,11 +62,11 @@ class GSApiClient @Autowired constructor(
     /**
      * Gets problem file by its id.
      */
-    fun getProblemFileById(id: Long): ResponseEntity<MultipartFile> {
-        val result = get("$PROBLEM_FILES_ENDPOINT$id", MultipartFile::class.java)
+    fun getProblemFile(fileId: Long): ByteArray? {
+        val result = get("$PROBLEM_FILES_ENDPOINT$fileId", ByteArray::class.java) ?: return null
         logger.info("Response: ${result.body}")
 
-        return result
+        return result.body
     }
     //endregion
 
@@ -84,39 +75,39 @@ class GSApiClient @Autowired constructor(
      * Gets submission info by id. Response returns JSON contains:
      * problemId, fileIds array, gradingInfo, gradingStatus and gradingResultInfo.
      */
-    fun getSubmissionById(id: Long): ResponseEntity<SubmissionDto> {
-        val result = get("$SUBMISSIONS_ENDPOINT$id", SubmissionDto::class.java)
+    fun getSubmission(id: Long): SubmissionDto? {
+        val result = get("$SUBMISSIONS_ENDPOINT$id", SubmissionDto::class.java) ?: return null
         logger.info("Response: ${result.body}")
 
-        return result
+        return result.body
     }
 
     /**
      * Rechecks submission by id.
      */
-    fun postSubmission(id: Long): ResponseEntity<SubmissionDto> {
+    fun postSubmission(id: Long): Boolean {
         val body = EMPTY_BODY
 
-        val result = post("$SUBMISSIONS_ENDPOINT$id", body, SubmissionDto::class.java)
+        val result = post("$SUBMISSIONS_ENDPOINT$id", body, Void::class.java) ?: return false
         logger.info("Response: ${result.body}")
 
-        return result
+        return true
     }
 
     /**
      * Posts submission.
      */
-    fun postSubmission(problemId: Long, gradingInfo: String?, files: List<MultipartFile>): ResponseEntity<SubmissionDto> {
-        val body = mapOf(
-            "problemId" to problemId,
-            "gradingInfo" to gradingInfo,
-            "files" to files
-        )
+    fun postSubmission(
+        problemId: Long,
+        gradingInfo: String?,
+        files: List<MultipartFile>
+    ): SubmissionDto? {
+        val body = SubmissionBody(problemId, gradingInfo, files)
 
-        val result = post(SUBMISSIONS_ENDPOINT, body, SubmissionDto::class.java)
+        val result = post(SUBMISSIONS_ENDPOINT, body, SubmissionDto::class.java) ?: return null
         logger.info("Response: ${result.body}")
 
-        return result
+        return result.body
     }
     //endregion
 
@@ -124,13 +115,24 @@ class GSApiClient @Autowired constructor(
     /**
      * Gets submission file by its id. returns response entity with application/octet-stream content type.
      */
-    fun getSubmissionFile(id: Long): ResponseEntity<ByteArray> {
-        val result = get("$SUBMISSION_FILES_ENDPOINT$id", ByteArray::class.java)
+    fun getSubmissionFile(id: Long): ByteArray? {
+        val result = get("$SUBMISSION_FILES_ENDPOINT$id", ByteArray::class.java) ?: return null
         logger.info("Response: ${result.body}")
 
-        return result
+        return result.body
     }
     //endregion
+
+    data class ProblemBody(
+        val info: String,
+        val files: List<MultipartFile>
+    )
+
+    data class SubmissionBody(
+        val problemId: Long,
+        val gradingInfo: String?,
+        val files: List<MultipartFile>
+    )
 
     data class ProblemDto(
         val id: Long,
@@ -147,34 +149,55 @@ class GSApiClient @Autowired constructor(
         val gradingResultInfo: String?
     )
 
-    private fun <T> get(endPoint: String, responseType: Class<T>): ResponseEntity<T> {
+    private fun <T> get(endPoint: String, responseType: Class<T>): ResponseEntity<T>? {
         val fullUrl = "$url/$endPoint"
         logger.info("Sending GET request to $fullUrl")
 
         val headers = setUpHeaders()
-        return httpClient.sendGetRequest(fullUrl, responseType, headers)
+        val responseEntity = getResponseOrNull { httpClient.sendGetRequest(fullUrl, responseType, headers) }
+
+        return responseEntity
     }
 
-    private fun <T> post(endPoint: String, body: Any, responseType: Class<T>): ResponseEntity<T> {
+    private fun <T> post(endPoint: String, body: Any, responseType: Class<T>): ResponseEntity<T>? {
         val fullUrl = "$url/$endPoint"
         logger.info("Sending POST request to $fullUrl")
 
         val headers = setUpHeaders()
-        return httpClient.sendPostRequest(fullUrl, body, responseType, headers)
+        val responseEntity = getResponseOrNull { httpClient.sendPostRequest(fullUrl, body, responseType, headers) }
+
+        return responseEntity
     }
 
-    private fun <T> put(endPoint: String, body: Any, responseType: Class<T>): ResponseEntity<T> {
+    private fun <T> put(endPoint: String, body: Any, responseType: Class<T>): ResponseEntity<T>? {
         val fullUrl = "$url/$endPoint"
         logger.info("Sending PUT request to $fullUrl")
 
         val headers = setUpHeaders()
-        return httpClient.sendPutRequest(fullUrl, body, responseType, headers)
+        val responseEntity = getResponseOrNull { httpClient.sendPutRequest(fullUrl, body, responseType, headers) }
+
+        return responseEntity
     }
 
     private fun setUpHeaders(): HttpHeaders {
         val headers = HttpHeaders()
         headers.setBasicAuth(username, password)
         return headers
+    }
+
+    private fun <T> getResponseOrNull(response: () -> ResponseEntity<T>): ResponseEntity<T>? {
+        return try {
+            val result = response()
+            if (!result.statusCode.is2xxSuccessful) {
+                logger.error("Response status code is not OK: ${result.statusCode}")
+                return null
+            }
+
+            result
+        } catch (e: Exception) {
+            logger.error(e.message)
+            null
+        }
     }
 
     companion object {
@@ -185,9 +208,6 @@ class GSApiClient @Autowired constructor(
 
         private const val SUBMISSIONS_ENDPOINT = "submissions/"
         private const val SUBMISSION_FILES_ENDPOINT = "${SUBMISSIONS_ENDPOINT}files/"
-
-        private const val TRIK_INFO =
-            "{ \"trikStudioVersion\": \"karasss/trik-studio:master-2022.2-35-g2913f5\", \"timeout\": 120 }"
 
         private const val EMPTY_BODY = ""
     }
