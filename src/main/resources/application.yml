@@ -35,6 +35,9 @@ app:
     url: https://srv3.trikset.com/v1/grading-system
     username: testsys_username
     password: testsys_p@ssword_J1o85BtCibCARyC
+  trik-studio:
+    version: karasss/trik-studio:master-2022.2-35-g2913f5
+    timeout: 120
   testsys:
     data:
       tests:
