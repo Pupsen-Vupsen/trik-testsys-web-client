@@ -5,8 +5,10 @@ import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.servlet.mvc.support.RedirectAttributes
 import trik.testsys.webclient.service.impl.*
+import trik.testsys.webclient.util.TrikMultiPartFile
 import trik.testsys.webclient.util.TrikRedirectView
 import trik.testsys.webclient.util.logger.TrikLogger
+import java.io.File
 import java.time.LocalDateTime
 import java.time.ZoneOffset.UTC
 import java.util.*
@@ -22,7 +24,7 @@ class AccessController @Autowired constructor(
     private val developerService: DeveloperService,
     private val viewerService: ViewerService,
 
-    private val apiClient: GSApiClient
+    private val apiService: GSApiService
 ) {
 
     @GetMapping("/access")
@@ -95,7 +97,8 @@ class AccessController @Autowired constructor(
 
     @GetMapping
     fun get(model: Model): Model {
-        val bytes = apiClient.getSubmissionFile(1)
+        val testMultiPartFile = TrikMultiPartFile(1, ByteArray(1))
+        val fileIds = apiService.createProblem(listOf(testMultiPartFile))
 
         return model
     }
