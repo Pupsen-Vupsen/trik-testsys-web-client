@@ -113,12 +113,13 @@ class GradingInfoParserRunner(
         val verdicts = fileManager.getVerdictFiles(solution)
 
         val objectMapper = createMapper()
+
+        var allFailed = true
+        var totalScore = 0L
+
         verdicts.forEach { verdict ->
             val elements = objectMapper.readVerdictElements(verdict) ?: run {
                 logger.error("Failed to read verdict elements from file $verdict.")
-
-                solution.status = Solution.SolutionStatus.FAILED
-                solution.score = 0
 
                 return@forEach
             }
@@ -126,28 +127,19 @@ class GradingInfoParserRunner(
             val infoElements = elements.filter { it.level == VerdictElement.LEVEL_INFO }
             val errorElements = elements.filter { it.level == VerdictElement.LEVEL_ERROR }
 
-            if (errorElements.isNotEmpty()) {
-                solution.status = Solution.SolutionStatus.FAILED
-                solution.score = 0
-
-                return@forEach
-            }
+            if (errorElements.isNotEmpty()) return@forEach
 
             val score = infoElements
                 .filter { (_, message) -> VerdictElement.SCORE_PATTERN.matcher(message).find() }
                 .mapNotNull { (_, message) -> VerdictElement.matchScore(message) }
-                .maxOrNull()
-                ?: run {
+                .maxOrNull() ?: return@forEach
 
-                    solution.status = Solution.SolutionStatus.FAILED
-                    solution.score = 0
-
-                    return@forEach
-                }
-
-            solution.status = Solution.SolutionStatus.PASSED
-            solution.score = score
+            allFailed = false
+            totalScore += score
         }
+
+        solution.status = if (allFailed) Solution.SolutionStatus.FAILED else Solution.SolutionStatus.PASSED
+        solution.score = totalScore
 
         if (solution.isLastTaskTest()) changeTaskTestingResult(solution)
 
@@ -216,13 +208,8 @@ class GradingInfoParserRunner(
         val solution = solutionService.find(solutionId.toLong()) ?: return@let
 
         // timeout error
-        if (kind == 4) {
-            solution.status = Solution.SolutionStatus.FAILED
-            solution.score = 0
-        } else {
-            solution.status = Solution.SolutionStatus.ERROR
-            solution.score = 0
-        }
+        solution.status = if (kind == 4) Solution.SolutionStatus.FAILED else Solution.SolutionStatus.ERROR
+        solution.score = 0
 
         solutionService.save(solution)
     }
